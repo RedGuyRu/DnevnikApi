@@ -1,0 +1,125 @@
+// noinspection JSUnusedGlobalSymbols
+
+import {DateTime} from "luxon";
+
+export class Authenticator {
+    /**
+     * Initialize the authenticator.
+     */
+    init(): Promise<void>;
+
+    /**
+     * Try to authenticate the user and returns true is successful.
+     */
+    authenticate(): Promise<boolean>;
+
+    /**
+     * Returns user student ID.
+     */
+    getStudentId(): Promise<number | null>;
+
+    /**
+     * Returns user token.
+     */
+    getToken(): Promise<string | null>;
+}
+
+export class PredefinedAuthenticator extends Authenticator {
+    constructor(studentId: number, token: string);
+}
+
+export class Client {
+    constructor(authenticator: Authenticator);
+
+    /**
+     * Returns the user profile.
+     */
+    getProfile(): Promise<Profile>;
+}
+
+export class Profile {
+    id: number;
+    created_at: DateTime | null;
+    updated_at: DateTime | null;
+    deleted_at: DateTime | null;
+    person_id: string;
+    transferred: boolean;
+    school_id: number;
+    organization_id: string;
+    user_id: number;
+    study_mode_id: number;
+    user_name: string;
+    short_name: string;
+    last_name: string | null;
+    first_name: string | null;
+    middle_name: string | null;
+    change_password_required: boolean;
+    birth_date: DateTime | null;
+    left_on: DateTime | null;
+    enlisted_on: DateTime | null;
+    gusoev_login: string | null;
+    age: number | null;
+    sex: "male" | "female";
+    deleted: boolean;
+    email: string | null;
+    phone_number: string | null;
+    email_ezd: string | null;
+    phone_number_ezd: string | null;
+    class_unit: ClassUnit;
+    previously_class_unit: ClassUnit | null;
+    curricula: Curricula | null;
+    non_attendance: number;
+    mentors: [];
+    ispp_account: number | null;
+    previously_profile_id: number | null;
+    //TODO find field type
+    student_viewed: null;
+    migration_date: DateTime | null;
+    //TODO find field type
+    education_level: null;
+    //TODO find field type
+    class_level: null;
+    //TODO find field type
+    snils: null;
+    last_sign_in_at: DateTime | null;
+    groups: [];
+    parents: Parent[];
+    marks: [];
+    final_marks: [];
+    attendances: []
+    lesson_comments: []
+    home_based_periods: []
+    subjects: []
+    ae_attendances: []
+    ec_attendances: []
+    assignments: []
+    left_on_registry: DateTime | null;
+}
+
+export class ClassUnit {
+    id: number;
+    class_level_id: number;
+    name: string;
+    home_based: boolean;
+}
+
+export class Curricula {
+    id: number;
+    name: string;
+}
+
+export class Parent {
+    id: number;
+    user_id: number;
+    type: "Родитель";
+    gusoev_login: string | null;
+    name: string;
+    phone_number_ezd: string | null;
+    email_ezd: string | null;
+    phone_number: string | null;
+    email: string | null;
+    //TODO find field type
+    snils: null;
+    last_sign_in_at: DateTime | null;
+    hidden: boolean;
+}
