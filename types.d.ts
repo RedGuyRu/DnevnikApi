@@ -35,9 +35,52 @@ export class Client {
      * Returns the user profile.
      */
     getProfile(): Promise<Profile>;
+
+    /**
+     * Returns the user average marks.
+     */
+    getAverageMarks(): Promise<AverageMark[]>;
+
+    /**
+     * Returns all academic years.
+     */
+    static getAcademicYears(): Promise<AcademicYear[]>;
+
+    /**
+     * Returns current academic year.
+     */
+    static getCurrentAcademicYear(): Promise<AcademicYear>;
 }
 
-export class Profile {
+export class Utils {
+    /**
+     * Returns average of the given values.
+     */
+    static average(values: number[]): number;
+
+    static parseMarksWithWeight(mark: Mark[]);
+}
+
+declare class AverageMark {
+    name: string;
+    mark: number;
+}
+
+declare class AcademicYear {
+    id: number;
+    name: string;
+    begin_date: DateTime;
+    end_date: DateTime;
+    calendar_id: number;
+    current_year: boolean;
+}
+
+declare class Mark {
+    mark: number;
+    weight: number;
+}
+
+declare class Profile {
     id: number;
     created_at: DateTime | null;
     updated_at: DateTime | null;
@@ -103,12 +146,12 @@ export class ClassUnit {
     home_based: boolean;
 }
 
-export class Curricula {
+declare class Curricula {
     id: number;
     name: string;
 }
 
-export class Parent {
+declare class Parent {
     id: number;
     user_id: number;
     type: "Родитель";
