@@ -50,6 +50,11 @@ export class Client {
      * Returns current academic year.
      */
     static getCurrentAcademicYear(): Promise<AcademicYear>;
+
+    /**
+     * Returns selected subjects is {@link subjects} passed, otherwise returns all subjects.
+     */
+    getSubjects(subjects?: string[] | number[]): Promise<Subject[]>;
 }
 
 export class Utils {
@@ -59,6 +64,51 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: Mark[]);
+}
+
+declare class Subject {
+    "id": number;
+    //TODO find field type
+    "created_at": null;
+    //TODO find field type
+    "updated_at": null;
+    //TODO find field type
+    "deleted_at": null;
+    "name": string;
+    "exam_name": string;
+    "subject_group_id": number;
+    //TODO find field type
+    "school_id": null;
+    "subject_status": number;
+    "is_curriculum_subject": boolean;
+    "is_discipline": boolean;
+    "only_group": boolean;
+    "is_adapt": boolean;
+    "is_spo": boolean;
+    "knowledge_field_ids": number[];
+    "fgos_version_id": number[];
+    //TODO find field type
+    "curriculum_subject_ids": null;
+    //TODO find field type
+    "curriculum_subjects": null;
+    //TODO find field type
+    "discipline_ids": null;
+    //TODO find field type
+    "disciplines": null;
+    //TODO find field type
+    "children_subjects": null;
+    //TODO find field type
+    "curriculum_subject_attributes": null;
+    //TODO find field type
+    "curriculum_levels": null;
+    //TODO find field type
+    "control_forms": null;
+    "knowledge_field_link": [];
+    "adapt_parameters": boolean[];
+    "integration_id": number;
+    //TODO find field type
+    "parent_subject_ids": null;
+    "education_level_ids": number[];
 }
 
 declare class AverageMark {

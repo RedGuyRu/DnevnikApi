@@ -62,6 +62,18 @@ class Client {
         return result;
     }
 
+    async getSubjects(lessons = []) {
+        let report = await Axios.get("https://dnevnik.mos.ru/core/api/subjects?ids=" + lessons.join(","), {
+            headers: {
+                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
+                "Auth-token": await this._authenticator.getToken(),
+                "Profile-Id": await this._authenticator.getStudentId()
+            }
+        });
+
+        return report.data;
+    }
+
     static async getAcademicYears() {
         let res = await Axios.get("https://dnevnik.mos.ru/core/api/academic_years");
         res = res.data;
