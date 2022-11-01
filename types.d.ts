@@ -55,6 +55,13 @@ export class Client {
      * Returns selected subjects is {@link subjects} passed, otherwise returns all subjects.
      */
     getSubjects(subjects?: string[] | number[]): Promise<Subject[]>;
+
+    /**
+     * Returns all marks from selected period. If {@link from} or {@link to}, they set to current date.
+     * @param from
+     * @param to
+     */
+    getMarks(from?: DateTime, to?: DateTime): Promise<Mark[]>;
 }
 
 export class Utils {
@@ -63,7 +70,52 @@ export class Utils {
      */
     static average(values: number[]): number;
 
-    static parseMarksWithWeight(mark: Mark[]);
+    static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare class Mark {
+    "created_at": DateTime;
+    "updated_at": DateTime;
+    "id": number;
+    "student_profile_id": number;
+    "weight": number;
+    "teacher_id": number;
+    "name": "5"|"4"|"3"|"2";
+    "comment": string;
+    "control_form_id": number;
+    //TODO find field type
+    "deleted_by": null;
+    "grade_id": number;
+    "schedule_lesson_id": number;
+    "is_exam": boolean;
+    "group_id": number;
+    "date": DateTime;
+    "is_point": boolean;
+    //TODO find field type
+    "point_date": null;
+    "subject_id": number
+    "grade_system_id": number;
+    "grade_system_type": "five"| "four" | "three" | "two";
+    "values": MarkValue[];
+    //TODO find field type
+    "course_lesson_topic_id": null;
+    "theme_frame_integration_id": string;
+    //TODO find field type
+    "project_id": null
+}
+
+declare class MarkValue {
+    "grade_system_id": number;
+    "name": string;
+    "nmax": number;
+    "grade_system_type": string;
+    "grade": Grade
+}
+
+declare class Grade {
+    "origin": string;
+    "five": number;
+    "hundred": number;
 }
 
 declare class Subject {
@@ -125,7 +177,7 @@ declare class AcademicYear {
     current_year: boolean;
 }
 
-declare class Mark {
+declare class MarkWithWidth {
     mark: number;
     weight: number;
 }

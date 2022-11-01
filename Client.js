@@ -74,6 +74,24 @@ class Client {
         return report.data;
     }
 
+    async getMarks(from = DateTime.now(), to = DateTime.now()) {
+        let report = await Axios.get("https://dnevnik.mos.ru/core/api/marks?created_at_from=" + from.setZone("Europe/Moscow").toFormat("dd.LL.y") + "&created_at_to=" + to.setZone("Europe/Moscow").toFormat("dd.LL.y") + "&student_profile_id=" + await this._authenticator.getStudentId(), {
+            headers: {
+                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
+                "Auth-token": await this._authenticator.getToken(),
+                "Profile-Id": await this._authenticator.getStudentId()
+            }
+        });
+
+        for (let d of report.data) {
+            d.created_at = DateTime.fromFormat(d.created_at, "dd.MM.yyyy HH:mm");
+            d.updated_at = DateTime.fromFormat(d.updated_at, "dd.MM.yyyy HH:mm");
+            d.date = DateTime.fromFormat(d.date, "dd.MM.yyyy");
+        }
+
+        return report.data;
+    }
+
     static async getAcademicYears() {
         let res = await Axios.get("https://dnevnik.mos.ru/core/api/academic_years");
         res = res.data;
