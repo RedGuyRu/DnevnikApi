@@ -92,6 +92,34 @@ class Client {
         return report.data;
     }
 
+    async getHomework(from = DateTime.now(), to = DateTime.now()) {
+        let report = await Axios.get("https://dnevnik.mos.ru/core/api/student_homeworks?begin_prepared_date=" + from.setZone("Europe/Moscow").toFormat("dd.LL.y") + "&end_prepared_date=" + to.setZone("Europe/Moscow").toFormat("dd.LL.y") + "&student_profile_id=" + await this._authenticator.getStudentId(), {
+            headers: {
+                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId()+ ";",
+                "Auth-token": await this._authenticator.getToken(),
+                "Profile-Id": await this._authenticator.getStudentId()
+            }
+        });
+
+        for (let d of report.data) {
+            d.created_at = DateTime.fromFormat(d.created_at, "dd.MM.yyyy HH:mm");
+            d.updated_at = d.updated_at==null?null:DateTime.fromFormat(d.updated_at, "dd.MM.yyyy HH:mm");
+            d.deleted_at = d.deleted_at==null?null:DateTime.fromFormat(d.deleted_at, "dd.MM.yyyy HH:mm");
+
+            d.homework_entry.created_at = DateTime.fromFormat(d.homework_entry.created_at, "dd.MM.yyyy HH:mm");
+            d.homework_entry.updated_at = d.homework_entry.updated_at==null?null:DateTime.fromFormat(d.homework_entry.updated_at, "dd.MM.yyyy HH:mm");
+            d.homework_entry.deleted_at = d.homework_entry.deleted_at==null?null:DateTime.fromFormat(d.homework_entry.deleted_at, "dd.MM.yyyy HH:mm");
+
+            d.homework_entry.homework.created_at = DateTime.fromFormat(d.homework_entry.homework.created_at, "dd.MM.yyyy HH:mm");
+            d.homework_entry.homework.updated_at = d.homework_entry.homework.updated_at==null?null:DateTime.fromFormat(d.homework_entry.homework.updated_at, "dd.MM.yyyy HH:mm");
+            d.homework_entry.homework.deleted_at = d.homework_entry.homework.deleted_at==null?null:DateTime.fromFormat(d.homework_entry.homework.deleted_at, "dd.MM.yyyy HH:mm");
+            d.homework_entry.homework.date_assigned_on = DateTime.fromFormat(d.homework_entry.homework.date_assigned_on, "dd.MM.yyyy");
+            d.homework_entry.homework.date_prepared_for = DateTime.fromFormat(d.homework_entry.homework.date_prepared_for, "dd.MM.yyyy");
+        }
+
+        return report.data;
+    }
+
     static async getAcademicYears() {
         let res = await Axios.get("https://dnevnik.mos.ru/core/api/academic_years");
         res = res.data;

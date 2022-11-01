@@ -62,6 +62,13 @@ export class Client {
      * @param to
      */
     getMarks(from?: DateTime, to?: DateTime): Promise<Mark[]>;
+
+    /**
+     * Returns all homeworks from selected period. If {@link from} or {@link to}, they set to current date.
+     * @param from
+     * @param to
+     */
+    getHomework(from?: DateTime, to?: DateTime): Promise<Homework[]>;
 }
 
 export class Utils {
@@ -73,9 +80,110 @@ export class Utils {
     static parseMarksWithWeight(mark: MarkWithWidth[]);
 }
 
+declare class Homework {
+    "id": number;
+    "created_at": DateTime;
+    "updated_at": DateTime|null;
+    "deleted_at": DateTime|null;
+    "student_id": number;
+    "homework_entry_id": number;
+    "student_name": string;
+    "comment": null|string;
+    "is_ready": boolean;
+    "attachments": [];
+    "remote_attachments": [];
+    "homework_entry": HomeworkEntry;
+    "attachment_ids": []
+}
+
+declare class HomeworkEntry {
+    "id": number;
+    "created_at": DateTime;
+    "updated_at": DateTime|null;
+    "deleted_at": DateTime|null;
+    "homework_id": number;
+    "description": string;
+    "duration": number;
+    //TODO find field type
+    "no_duration": null;
+    "homework": HomeworkInfo;
+    "attachments": Attachment[];
+    //TODO find field type
+    "homework_entry_student_answer": null;
+    "controllable_items": [];
+    "homework_entry_comments": [];
+    "student_ids": number[];
+    "attachment_ids": [];
+    //TODO find field type
+    "controllable_item_ids": null;
+    //TODO find field type
+    "books": null;
+    //TODO find field type
+    "tests": null;
+    //TODO find field type
+    "scripts": null;
+    /**
+     * string with json object
+     */
+    "data": string;
+    //TODO find field type
+    "update_comment": null;
+    //TODO find field type
+    "game_apps": null;
+    //TODO find field type
+    "atomic_objects": null;
+    //TODO find field type
+    "related_materials": null;
+    "eom_urls": Eom[];
+    "long_term": boolean;
+    //TODO find field type
+    "is_digital_homework": null;
+}
+
+declare class Eom {
+    type: "LessonTemplate" | "TestSpecification" | "AtomicObject";
+    urls: EomUrl[];
+}
+
+declare class EomUrl {
+    url: string;
+    url_type: "player" | "view";
+    profile_type: string|null;
+}
+
+declare class Attachment {
+    path: string;
+}
+
+declare class HomeworkInfo {
+    "id": number;
+    "created_at": DateTime;
+    "updated_at": DateTime|null;
+    "deleted_at": DateTime|null;
+    //TODO find field type
+    "deleted_by": null;
+    "teacher_id": number;
+    "subject_id": number;
+    //TODO find field type
+    "is_required": null;
+    //TODO find field type
+    "mark_required": null;
+    "group_id": number
+    "date_assigned_on": DateTime;
+    "date_prepared_for": DateTime;
+    "subject": HomeworkSubject;
+}
+
+declare class HomeworkSubject {
+    "id": number;
+    "name": string;
+    //TODO find field type
+    "exam_name": null;
+}
+
 declare class Mark {
     "created_at": DateTime;
-    "updated_at": DateTime;
+    "updated_at": DateTime|null;
     "id": number;
     "student_profile_id": number;
     "weight": number;
