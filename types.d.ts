@@ -69,6 +69,12 @@ export class Client {
      * @param to
      */
     getHomework(from?: DateTime, to?: DateTime): Promise<Homework[]>;
+
+    /**
+     * Returns schedule for selected date. If {@link date} is not set, it set to current date.
+     * @param date
+     */
+    getSchedule(date: DateTime): Promise<Schedule>;
 }
 
 export class Utils {
@@ -78,6 +84,96 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare class Schedule {
+    "summary": string;
+    "date": DateTime;
+    "activities": (BreakActivity|LessonActivity)[];
+    "has_homework": boolean;
+}
+
+declare class Activity {
+    info: string;
+    begin_utc: DateTime;
+    end_utc: DateTime;
+}
+
+declare class BreakActivity extends Activity {
+    type: 'BREAK';
+    duration: number;
+}
+
+declare class LessonActivity extends Activity {
+    "type": "LESSON";
+    "begin_time": string;
+    "end_time": string;
+    "room_number": string;
+    "room_name": string;
+    "building_name": string;
+    "lesson": Lesson;
+    "homework_presence_status_id": number;
+}
+
+declare class Lesson {
+    "schedule_item_id": number;
+    "subject_id": number;
+    "subject_name": string;
+    //TODO find field type
+    "course_lesson_type": null;
+    "teacher": Teacher;
+    "marks": LessonMark[];
+    "homework": string;
+    "link_types": [];
+    "materials_count": Object;
+    "lesson_type": "NORMAL"|"REMOTE";
+    "lesson_education_type": string;
+    //TODO find field type
+    "evaluation": null;
+    //TODO find field type
+    "absence_reason_id": null;
+    "bell_id": number;
+    "replaced": boolean;
+    "homework_count": HomeworkCount;
+    //TODO find field type
+    "esz_field_id": null;
+    "is_cancelled": boolean;
+    "is_missed_lesson": boolean;
+    "is_virtual": boolean;
+}
+
+declare class HomeworkCount {
+    "total_count": number;
+    "ready_count": number;
+}
+
+declare class Teacher {
+    "last_name": string;
+    "first_name": string;
+    "middle_name": string;
+    //TODO find field type
+    "birth_date": null;
+    //TODO find field type
+    "sex": null;
+    //TODO find field type
+    "user_id": null;
+}
+
+declare class LessonMark {
+    "id": number;
+    "value": "5"|"4"|"3"|"2";
+    "values": MarkValue[];
+    "comment": string;
+    "weight": number;
+    "point_date": null;
+    "control_form_name": string;
+    "comment_exists": boolean;
+    "created_at": DateTime;
+    "updated_at": DateTime;
+    "criteria": [];
+    "is_exam": boolean;
+    "is_point": boolean;
+    "original_grade_system_type": string;
 }
 
 declare class Homework {

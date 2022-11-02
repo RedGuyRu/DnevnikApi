@@ -120,6 +120,31 @@ class Client {
         return report.data;
     }
 
+    async getSchedule(date = DateTime.now()) {
+        let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/schedule?student_id=" + await this._authenticator.getStudentId() + "&date=" + date.setZone("Europe/Moscow").toFormat("yyyy-MM-dd"), {
+            headers: {
+                Cookie: "auth_token=" + await this._authenticator.getToken()+ "; student_id=" + await this._authenticator.getStudentId()+ ";",
+                "Auth-Token": await this._authenticator.getToken(),
+                "Profile-Id": await this._authenticator.getStudentId(),
+            }
+        });
+
+        report.data.date = DateTime.fromFormat(report.data.date, "yyyy-MM-dd");
+
+        for (let activity of report.data.activities) {
+            activity.begin_utc = DateTime.fromSeconds(activity.begin_utc);
+            activity.end_utc = DateTime.fromSeconds(activity.end_utc);
+            if(activity.type === "LESSON") {
+                for (let mark of activity.lesson.marks) {
+                    mark.created_at = DateTime.fromISO(mark.created_at);
+                    mark.updated_at = DateTime.fromISO(mark.updated_at);
+                }
+            }
+        }
+
+        return report.data;
+    }
+
     static async getAcademicYears() {
         let res = await Axios.get("https://dnevnik.mos.ru/core/api/academic_years");
         res = res.data;
