@@ -75,6 +75,11 @@ export class Client {
      * @param date
      */
     getSchedule(date: DateTime): Promise<Schedule>;
+
+    /**
+     * Returns teacher profile by {@link id}.
+     */
+    getTeacher(id: number): Promise<Teacher>;
 }
 
 export class Utils {
@@ -84,6 +89,143 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare class Teacher {
+    "id": number;
+    "created_at": DateTime;
+    "updated_at": DateTime|null;
+    "deleted_at": DateTime|null;
+    "user_id": number;
+    "gusoev_login": string|null;
+    "name": string;
+    "school_id": number;
+    "type": "teacher"|"staff";
+    "roles": ("teacher"|"staff")[];
+    "mobility": string;
+    "education_level_ids": [];
+    "deleted": boolean;
+    "workload": number;
+    "subjects": Subject[];
+    "class_unit_ids": [];
+    "class_units": [];
+    "group_ids": [];
+    "managed_class_unit_ids": number[];
+    "managed_class_units": ClassUnit[];
+    "building_ids": number[];
+    "buildings": Building[];
+    "room_ids": number[];
+    "assigned_group_ids": [];
+    "assigned_ae_group_ids": [];
+    "assigned_ec_group_ids": [];
+    "rooms": Room[];
+    //TODO find field type
+    "comment": null;
+    "user": FIO;
+    "virtual": boolean;
+    "gap_allowed": boolean;
+    "user_integration_id": number;
+    "is_gap_allowed": boolean;
+    "for_consideration": boolean;
+    "subject_ids": number[]
+    "week_day_ids": [];
+    "teacher_week_days": [];
+    "replacement_groups_ids": [];
+    "is_newcomer": boolean;
+}
+
+declare class FIO {
+    "last_name": string;
+    "middle_name": string;
+    "first_name": string;
+}
+
+declare class Room {
+    "id": number;
+    //TODO find field type
+    "created_at": null;
+    //TODO find field type
+    "updated_at": null;
+    //TODO find field type
+    "deleted_at": null;
+    "name": string;
+    "number": string;
+    "capacity": number;
+    //TODO find field type
+    "responsible_id": null;
+    //TODO find field type
+    "room_type_id": null;
+    //TODO find field type
+    "floor": null;
+    //TODO find field type
+    "description": null;
+    "education_level_ids": [];
+    "subject_ids": [];
+    "teacher_ids": [];
+    //TODO find field type
+    "is_ae_education": null;
+    //TODO find field type
+    "is_subsidiary": null;
+    //TODO find field type
+    "is_administrative": null
+    "building_id": number;
+}
+
+declare class Building {
+    "id": number;
+    "created_at": DateTime|null;
+    "updated_at": DateTime|null;
+    "deleted_at": DateTime|null;
+    "name": string;
+    "address": string;
+    //TODO find field type
+    "school_id": null;
+    //TODO find field type
+    "rooms_number": null;
+    //TODO find field type
+    "floor_count": null;
+    //TODO find field type
+    "number": null;
+    //TODO find field type
+    "postal_index": null;
+    //TODO find field type
+    "county": null;
+    //TODO find field type
+    "gusoev_county_key": null;
+    //TODO find field type
+    "district": null;
+    //TODO find field type
+    "gusoev_district_key": null;
+    //TODO find field type
+    "eo_address": null;
+    //TODO find field type
+    "gusoev_eu_key": null;
+    //TODO find field type
+    "eu": null;
+    //TODO find field type
+    "city": null;
+    //TODO find field type
+    "gusoev_kladr_key": null;
+    //TODO find field type
+    "street": null;
+    //TODO find field type
+    "gusoev_address_key": null;
+    //TODO find field type
+    "building": null;
+    //TODO find field type
+    "description": null;
+    //TODO find field type
+    "education_level_ids": null;
+    //TODO find field type
+    "capacity": null;
+    //TODO find field type
+    "unom": null;
+    //TODO find field type
+    "image": null;
+    //TODO find field type
+    "type": null;
+    //TODO find field type
+    "org_territory": null
 }
 
 declare class Schedule {
@@ -121,7 +263,7 @@ declare class Lesson {
     "subject_name": string;
     //TODO find field type
     "course_lesson_type": null;
-    "teacher": Teacher;
+    "teacher": ShortTeacher;
     "marks": LessonMark[];
     "homework": string;
     "link_types": [];
@@ -147,7 +289,7 @@ declare class HomeworkCount {
     "ready_count": number;
 }
 
-declare class Teacher {
+declare class ShortTeacher {
     "last_name": string;
     "first_name": string;
     "middle_name": string;

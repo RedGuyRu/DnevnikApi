@@ -145,6 +145,32 @@ class Client {
         return report.data;
     }
 
+    async getTeacher(id) {
+        let report = await Axios.get("https://dnevnik.mos.ru/core/api/teacher_profiles/" + id, {
+            headers: {
+                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
+                "Auth-token": await this._authenticator.getToken(),
+                "Profile-Id": await this._authenticator.getStudentId()
+            }
+        });
+
+        report.data.created_at = DateTime.fromFormat(report.data.created_at, "yyyy-MM-dd");
+        report.data.updated_at = report.data.updated_at==null?null:DateTime.fromFormat(report.data.updated_at, "yyyy-MM-dd");
+        report.data.deleted_at = report.data.deleted_at==null?null:DateTime.fromFormat(report.data.deleted_at, "yyyy-MM-dd");
+        for (let building of report.data.buildings) {
+            building.created_at = building.created_at==null?null:DateTime.fromFormat(building.created_at, "yyyy-MM-dd");
+            building.updated_at = building.updated_at==null?null:DateTime.fromFormat(building.updated_at, "yyyy-MM-dd");
+            building.deleted_at = building.deleted_at==null?null:DateTime.fromFormat(building.deleted_at, "yyyy-MM-dd");
+        }
+        for (let room of report.data.rooms) {
+            room.created_at = room.created_at==null?null:DateTime.fromFormat(room.created_at, "yyyy-MM-dd");
+            room.updated_at = room.updated_at==null?null:DateTime.fromFormat(room.updated_at, "yyyy-MM-dd");
+            room.deleted_at = room.deleted_at==null?null:DateTime.fromFormat(room.deleted_at, "yyyy-MM-dd");
+        }
+
+        return report.data;
+    }
+
     static async getAcademicYears() {
         let res = await Axios.get("https://dnevnik.mos.ru/core/api/academic_years");
         res = res.data;
