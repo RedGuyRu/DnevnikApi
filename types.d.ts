@@ -80,6 +80,11 @@ export class Client {
      * Returns teacher profile by {@link id}.
      */
     getTeacher(id: number): Promise<Teacher>;
+
+    /**
+     * Returns teams links for date. If {@link date} is not set, it set to current date.
+     */
+    getTeamsLinks(date?: DateTime): Promise<TeamsLink[]>;
 }
 
 export class Utils {
@@ -89,6 +94,11 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare class TeamsLink {
+    lesson: LessonActivity;
+    link: string;
 }
 
 declare class Teacher {

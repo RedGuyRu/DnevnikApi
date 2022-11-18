@@ -171,6 +171,28 @@ class Client {
         return report.data;
     }
 
+    async getTeamsLinks(date = DateTime.now()) {
+        let schedule = await this.getSchedule(date);
+
+        let links = [];
+
+        for (let lesson of schedule.activities) {
+            if (lesson.type !== "LESSON") continue;
+            if (lesson.lesson.lesson_type !== "REMOTE") continue;
+            let report = await Axios.get("https://dnevnik.mos.ru/vcs/links?scheduled_lesson_id=" + lesson.lesson.schedule_item_id, {
+                headers: {
+                    Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
+                    "Auth-token": await this._authenticator.getToken(),
+                    "Profile-Id": await this._authenticator.getStudentId()
+                }
+            });
+            if (report.status === 204) continue;
+            links.push({lesson: lesson, link: report.data._embedded.link_views[0].link_url});
+        }
+
+        return links;
+    }
+
     static async getAcademicYears() {
         let res = await Axios.get("https://dnevnik.mos.ru/core/api/academic_years");
         res = res.data;
