@@ -193,6 +193,20 @@ class Client {
         return links;
     }
 
+    async getMenu(date = DateTime.now()) {
+        let profile = await this.getProfile();
+        let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/v1.0/menu?date=" + date.setZone("Europe/Moscow").toFormat("yyyy-MM-dd") + "&contract_id=" + profile.ispp_account, {
+            headers: {
+                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
+                "Auth-Token": await this._authenticator.getToken(),
+                "Profile-Id": await this._authenticator.getStudentId(),
+            }
+        });
+        report = report.data;
+
+        return report.menu;
+    }
+
     static async getAcademicYears() {
         let res = await Axios.get("https://dnevnik.mos.ru/core/api/academic_years");
         res = res.data;

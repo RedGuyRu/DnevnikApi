@@ -85,6 +85,12 @@ export class Client {
      * Returns teams links for date. If {@link date} is not set, it set to current date.
      */
     getTeamsLinks(date?: DateTime): Promise<TeamsLink[]>;
+
+    /**
+     * Returns menu for date. If {@link date} is not set, it set to current date.
+     * @param date
+     */
+    getMenu(date?: DateTime): Promise<Menu[]>;
 }
 
 export class Utils {
@@ -94,6 +100,45 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare class Menu {
+    /**
+     * Name of the menu.
+     */
+    title: "Полдник" | "Обед" | "Завтрак" | string;
+    description: string;
+    /**
+     * Price of the menu in kopecks, divide by 100 to get in rubles. May be 0 for preferential meals.
+     */
+    summary: number;
+    meals: Meal[];
+    /**
+     * Is it menu preferential meals.
+     */
+    is_discount_complex: boolean;
+    used_subscription_feeding: boolean;
+    used_special_menu: boolean;
+    used_variable_feeding: boolean;
+}
+
+declare class Meal {
+    name: string;
+    ingredients: string;
+    /**
+     * Price of the meal in kopecks, divide by 100 to get in rubles. May be 0 randomly :D
+     */
+    price: number;
+    nutrition: Nutrition;
+    full_name: string;
+}
+
+declare class Nutrition {
+    calories: number;
+    protein: number;
+    fat: number;
+    carbs: number;
+    vitamins: [];
 }
 
 declare class TeamsLink {
