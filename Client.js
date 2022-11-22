@@ -207,6 +207,38 @@ class Client {
         return report.menu;
     }
 
+    async getNotifications() {
+        let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/notifications/search?student_id="+await this._authenticator.getStudentId(), {
+            headers: {
+                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
+                "Auth-Token": await this._authenticator.getToken(),
+                "Profile-Id": await this._authenticator.getStudentId(),
+            }
+        });
+        report = report.data;
+
+        for (let notification of report) {
+            notification.datetime = DateTime.fromFormat(notification.datetime, "yyyy-MM-dd HH:mm:ss.SSS");
+            notification.created_at = DateTime.fromFormat(notification.created_at, "yyyy-MM-dd HH:mm:ss.SSS");
+            notification.updated_at = DateTime.fromFormat(notification.updated_at, "yyyy-MM-dd HH:mm:ss.SSS");
+
+            switch (notification.event_type) {
+                case "update_mark":
+                case "create_mark": {
+                    notification.lesson_date = DateTime.fromFormat(notification.lesson_date, "yyyy-MM-dd HH:mm:ss");
+                    break;
+                }
+                case "create_homework":
+                case "update_homework": {
+                    notification.new_date_assigned_on = DateTime.fromFormat(notification.new_date_assigned_on, "yyyy-MM-dd HH:mm:ss");
+                    notification.new_date_prepared_for = DateTime.fromFormat(notification.new_date_prepared_for, "yyyy-MM-dd HH:mm:ss");
+                }
+            }
+        }
+
+        return report;
+    }
+
     static async getAcademicYears() {
         let res = await Axios.get("https://dnevnik.mos.ru/core/api/academic_years");
         res = res.data;

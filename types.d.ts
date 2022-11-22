@@ -91,6 +91,11 @@ export class Client {
      * @param date
      */
     getMenu(date?: DateTime): Promise<Menu[]>;
+
+    /**
+     * Return array of Notifications.
+     */
+    getNotifications(): Promise<Notification[]>;
 }
 
 export class Utils {
@@ -100,6 +105,62 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare class Notification {
+    datetime: DateTime;
+    created_at: DateTime;
+    updated_at: DateTime;
+    teacher_name: string;
+    student_profile_id: number;
+    author_profile_id: number;
+}
+
+declare class CreateMarkNotification extends Notification {
+    event_type: "create_mark";
+    /**
+     * Урок на который была поставлена оценка.
+     */
+    lesson_date: DateTime;
+    old_mark_value: string;
+    new_mark_value: string;
+    new_is_exam: boolean;
+    new_mark_weight: number;
+    control_form_name: string;
+    subject_name: string;
+}
+
+declare class UpdateMarkNotification extends Notification {
+    event_type: "update_mark";
+    /**
+     * Урок на который была поставлена оценка.
+     */
+    lesson_date: DateTime;
+    old_mark_value: string;
+    new_mark_value: string;
+    new_is_exam: boolean;
+    old_is_exam: boolean;
+    new_mark_weight: number;
+    old_mark_weight: number;
+    control_form_name: string;
+    subject_name: string;
+}
+
+declare class CreateHomeworkNotification extends Notification {
+    event_type: "create_homework";
+    subject_name: string;
+    new_hw_description: string;
+    new_date_assigned_on: DateTime;
+    new_date_prepared_for: DateTime;
+}
+
+declare class UpdateHomeworkNotification extends Notification {
+    event_type: "update_homework";
+    subject_name: string;
+    old_hw_description: string;
+    new_hw_description: string;
+    new_date_assigned_on: DateTime;
+    new_date_prepared_for: DateTime;
 }
 
 declare class Menu {

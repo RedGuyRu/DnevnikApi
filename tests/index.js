@@ -2,8 +2,10 @@ const Dnevnik = require("..");
 const {DateTime} = require("luxon");
 
 let client = new Dnevnik.Client(new Dnevnik.PredefinedAuthenticator(process.env.student_id, process.env.token));
-client.getMenu().then(e => {
-    for (let meal of e) {
-        console.log(meal.meals.map(e => e.name).join(", "));
+client.getNotifications().then(e => {
+    for (let notification of e) {
+        if(notification.event_type === "create_homework") {
+            console.log(notification.new_hw_description);
+        }
     }
 }).catch(e => console.log(e))
