@@ -240,6 +240,30 @@ class Client {
         return report;
     }
 
+    async getVisits(from = DateTime.now(), to = DateTime.now()) {
+        let profile = await this.getProfile();
+        let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/visits?from=" + from.setZone("Europe/Moscow").toFormat("yyyy-MM-dd") + "&to=" + to.setZone("Europe/Moscow").toFormat("yyyy-MM-dd") + "&contract_id=" + profile.ispp_account, {
+            headers: {
+                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
+                "Auth-Token": await this._authenticator.getToken(),
+                "Profile-Id": await this._authenticator.getStudentId(),
+            }
+        });
+        report = report.data;
+
+        for (let visit of report.payload) {
+            visit.date = DateTime.fromFormat(visit.date, "yyyy-MM-dd");
+            for (let enter of visit.visits) {
+                if(enter.in.includes(":"))
+                    enter.in = visit.date.setZone("Europe/Moscow").set({hour: enter.in.split(":")[0], minute: enter.in.split(":")[1]});
+                if(enter.out.includes(":"))
+                    enter.out = visit.date.setZone("Europe/Moscow").set({hour: enter.out.split(":")[0], minute: enter.out.split(":")[1]});
+            }
+        }
+
+        return report.payload;
+    }
+
     static async getAcademicYears() {
         let res = await Axios.get("https://dnevnik.mos.ru/core/api/academic_years");
         res = res.data;

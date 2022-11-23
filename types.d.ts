@@ -103,6 +103,13 @@ export class Client {
      * @param context_type
      */
     static getMeshAnswers(variant: number, context_type?: "homework"): Promise<Question[]>;
+
+    /**
+     * Return array of Visits. If {@link from} or {@link to} is not set, it set to current date.
+     * @param from
+     * @param to
+     */
+    getVisits(from?: DateTime, to?: DateTime): Promise<VisitDay[]>;
 }
 
 export class Utils {
@@ -112,6 +119,21 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare class VisitDay {
+    date: DateTime;
+    visits: Visit[];
+}
+
+declare class Visit {
+    in: DateTime | null;
+    out: DateTime | null;
+    duration: string;
+    address: string;
+    type: "COMMON";
+    is_warning: boolean;
+    short_name: string;
 }
 
 declare class Question {
