@@ -3,6 +3,7 @@ const Authenticator = require('./Authenticator');
 const Luxon = require('luxon');
 const Utils = require('./Utils');
 const {DateTime} = require("luxon");
+const AnswersParser = require("./AnswersParser");
 
 class Client {
 
@@ -95,7 +96,7 @@ class Client {
     async getHomework(from = DateTime.now(), to = DateTime.now()) {
         let report = await Axios.get("https://dnevnik.mos.ru/core/api/student_homeworks?begin_prepared_date=" + from.setZone("Europe/Moscow").toFormat("dd.LL.y") + "&end_prepared_date=" + to.setZone("Europe/Moscow").toFormat("dd.LL.y") + "&student_profile_id=" + await this._authenticator.getStudentId(), {
             headers: {
-                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId()+ ";",
+                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
                 "Auth-token": await this._authenticator.getToken(),
                 "Profile-Id": await this._authenticator.getStudentId()
             }
@@ -103,16 +104,16 @@ class Client {
 
         for (let d of report.data) {
             d.created_at = DateTime.fromFormat(d.created_at, "dd.MM.yyyy HH:mm");
-            d.updated_at = d.updated_at==null?null:DateTime.fromFormat(d.updated_at, "dd.MM.yyyy HH:mm");
-            d.deleted_at = d.deleted_at==null?null:DateTime.fromFormat(d.deleted_at, "dd.MM.yyyy HH:mm");
+            d.updated_at = d.updated_at == null ? null : DateTime.fromFormat(d.updated_at, "dd.MM.yyyy HH:mm");
+            d.deleted_at = d.deleted_at == null ? null : DateTime.fromFormat(d.deleted_at, "dd.MM.yyyy HH:mm");
 
             d.homework_entry.created_at = DateTime.fromFormat(d.homework_entry.created_at, "dd.MM.yyyy HH:mm");
-            d.homework_entry.updated_at = d.homework_entry.updated_at==null?null:DateTime.fromFormat(d.homework_entry.updated_at, "dd.MM.yyyy HH:mm");
-            d.homework_entry.deleted_at = d.homework_entry.deleted_at==null?null:DateTime.fromFormat(d.homework_entry.deleted_at, "dd.MM.yyyy HH:mm");
+            d.homework_entry.updated_at = d.homework_entry.updated_at == null ? null : DateTime.fromFormat(d.homework_entry.updated_at, "dd.MM.yyyy HH:mm");
+            d.homework_entry.deleted_at = d.homework_entry.deleted_at == null ? null : DateTime.fromFormat(d.homework_entry.deleted_at, "dd.MM.yyyy HH:mm");
 
             d.homework_entry.homework.created_at = DateTime.fromFormat(d.homework_entry.homework.created_at, "dd.MM.yyyy HH:mm");
-            d.homework_entry.homework.updated_at = d.homework_entry.homework.updated_at==null?null:DateTime.fromFormat(d.homework_entry.homework.updated_at, "dd.MM.yyyy HH:mm");
-            d.homework_entry.homework.deleted_at = d.homework_entry.homework.deleted_at==null?null:DateTime.fromFormat(d.homework_entry.homework.deleted_at, "dd.MM.yyyy HH:mm");
+            d.homework_entry.homework.updated_at = d.homework_entry.homework.updated_at == null ? null : DateTime.fromFormat(d.homework_entry.homework.updated_at, "dd.MM.yyyy HH:mm");
+            d.homework_entry.homework.deleted_at = d.homework_entry.homework.deleted_at == null ? null : DateTime.fromFormat(d.homework_entry.homework.deleted_at, "dd.MM.yyyy HH:mm");
             d.homework_entry.homework.date_assigned_on = DateTime.fromFormat(d.homework_entry.homework.date_assigned_on, "dd.MM.yyyy");
             d.homework_entry.homework.date_prepared_for = DateTime.fromFormat(d.homework_entry.homework.date_prepared_for, "dd.MM.yyyy");
         }
@@ -123,7 +124,7 @@ class Client {
     async getSchedule(date = DateTime.now()) {
         let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/schedule?student_id=" + await this._authenticator.getStudentId() + "&date=" + date.setZone("Europe/Moscow").toFormat("yyyy-MM-dd"), {
             headers: {
-                Cookie: "auth_token=" + await this._authenticator.getToken()+ "; student_id=" + await this._authenticator.getStudentId()+ ";",
+                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
                 "Auth-Token": await this._authenticator.getToken(),
                 "Profile-Id": await this._authenticator.getStudentId(),
             }
@@ -134,7 +135,7 @@ class Client {
         for (let activity of report.data.activities) {
             activity.begin_utc = DateTime.fromSeconds(activity.begin_utc);
             activity.end_utc = DateTime.fromSeconds(activity.end_utc);
-            if(activity.type === "LESSON") {
+            if (activity.type === "LESSON") {
                 for (let mark of activity.lesson.marks) {
                     mark.created_at = DateTime.fromISO(mark.created_at);
                     mark.updated_at = DateTime.fromISO(mark.updated_at);
@@ -155,17 +156,17 @@ class Client {
         });
 
         report.data.created_at = DateTime.fromFormat(report.data.created_at, "yyyy-MM-dd");
-        report.data.updated_at = report.data.updated_at==null?null:DateTime.fromFormat(report.data.updated_at, "yyyy-MM-dd");
-        report.data.deleted_at = report.data.deleted_at==null?null:DateTime.fromFormat(report.data.deleted_at, "yyyy-MM-dd");
+        report.data.updated_at = report.data.updated_at == null ? null : DateTime.fromFormat(report.data.updated_at, "yyyy-MM-dd");
+        report.data.deleted_at = report.data.deleted_at == null ? null : DateTime.fromFormat(report.data.deleted_at, "yyyy-MM-dd");
         for (let building of report.data.buildings) {
-            building.created_at = building.created_at==null?null:DateTime.fromFormat(building.created_at, "yyyy-MM-dd");
-            building.updated_at = building.updated_at==null?null:DateTime.fromFormat(building.updated_at, "yyyy-MM-dd");
-            building.deleted_at = building.deleted_at==null?null:DateTime.fromFormat(building.deleted_at, "yyyy-MM-dd");
+            building.created_at = building.created_at == null ? null : DateTime.fromFormat(building.created_at, "yyyy-MM-dd");
+            building.updated_at = building.updated_at == null ? null : DateTime.fromFormat(building.updated_at, "yyyy-MM-dd");
+            building.deleted_at = building.deleted_at == null ? null : DateTime.fromFormat(building.deleted_at, "yyyy-MM-dd");
         }
         for (let room of report.data.rooms) {
-            room.created_at = room.created_at==null?null:DateTime.fromFormat(room.created_at, "yyyy-MM-dd");
-            room.updated_at = room.updated_at==null?null:DateTime.fromFormat(room.updated_at, "yyyy-MM-dd");
-            room.deleted_at = room.deleted_at==null?null:DateTime.fromFormat(room.deleted_at, "yyyy-MM-dd");
+            room.created_at = room.created_at == null ? null : DateTime.fromFormat(room.created_at, "yyyy-MM-dd");
+            room.updated_at = room.updated_at == null ? null : DateTime.fromFormat(room.updated_at, "yyyy-MM-dd");
+            room.deleted_at = room.deleted_at == null ? null : DateTime.fromFormat(room.deleted_at, "yyyy-MM-dd");
         }
 
         return report.data;
@@ -208,7 +209,7 @@ class Client {
     }
 
     async getNotifications() {
-        let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/notifications/search?student_id="+await this._authenticator.getStudentId(), {
+        let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/notifications/search?student_id=" + await this._authenticator.getStudentId(), {
             headers: {
                 Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
                 "Auth-Token": await this._authenticator.getToken(),
@@ -257,6 +258,38 @@ class Client {
             }
         }
         return null;
+    }
+
+    static async getMeshAnswers(variant, context_type = "homework") {
+        //Статичный токен гостя который удивительным образом имеет доступ к ответам
+        let guestToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+        let guestId = 1000000000;
+        let responsesReport = await Axios.post("https://uchebnik.mos.ru/exam/rest/secure/testplayer/group",
+            {"test_type": "training_test", "generation_context_type": context_type, "generation_by_id": variant},
+            {
+                headers: {
+                    Cookie: "auth_token=" + guestToken + "; profile_id=" + guestId + "; udacl=resh; profile_type=demo; user_id=" + guestId + ";"
+                }
+            });
+
+        if (responsesReport === undefined || responsesReport.status !== 200) {
+            return [];
+        }
+        responsesReport = responsesReport.data;
+
+        let responses = [];
+
+        for (let trainingTask of responsesReport.training_tasks) {
+            let q = AnswersParser.parseQuestion(trainingTask.test_task.question_elements)
+            let task = {
+                question: q.text,
+                question_attachments: q.files,
+                answer: AnswersParser.parseAnswer(trainingTask.test_task.answer)
+            };
+            responses.push(task);
+        }
+
+        return responses;
     }
 }
 

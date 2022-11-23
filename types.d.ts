@@ -96,6 +96,13 @@ export class Client {
      * Return array of Notifications.
      */
     getNotifications(): Promise<Notification[]>;
+
+    /**
+     * Returns array of Answers on selected {@link variant}.
+     * @param variant
+     * @param context_type
+     */
+    static getMeshAnswers(variant: number, context_type?: "homework"): Promise<Question[]>;
 }
 
 export class Utils {
@@ -107,7 +114,45 @@ export class Utils {
     static parseMarksWithWeight(mark: MarkWithWidth[]);
 }
 
+declare class Question {
+    question: string;
+    question_attachments: string[];
+    answer: Answer;
+}
+
+declare class Answer {
+    type: string;
+}
+
+declare class AnswerText extends Answer {
+    type: "text";
+    text: string;
+}
+
+declare class AnswerTextArray extends Answer {
+    type: "texts";
+    texts: string[];
+}
+
+declare class AnswerNumber extends Answer {
+    type: "number";
+    number: number;
+}
+
+declare class AnswerMap extends Answer {
+    type: "map";
+    map: object;
+}
+
+declare class AnswerFree extends Answer {
+    /**
+     * Ответ проверяется вручную учителем через веб-интерфейс.
+     */
+    type: "free";
+}
+
 declare class Notification {
+    event_type: string;
     datetime: DateTime;
     created_at: DateTime;
     updated_at: DateTime;
