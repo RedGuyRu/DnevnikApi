@@ -110,6 +110,13 @@ export class Client {
      * @param to
      */
     getVisits(from?: DateTime, to?: DateTime): Promise<VisitDay[]>;
+
+    /**
+     * Returns billing details, such as balance, payment history.
+     * @param from
+     * @param to
+     */
+    getBilling(from?: DateTime, to?: DateTime): Promise<Billing>;
 }
 
 export class Utils {
@@ -119,6 +126,27 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare class Billing {
+    /** Balance in kopecks. */
+    balance: number;
+    payload: Bill[];
+}
+
+declare class Bill {
+    date: DateTime;
+    /** Day delta in kopecks. */
+    delta: number;
+    details: BillDetail[];
+}
+
+declare class BillDetail {
+    type: "PURCHASE" | "REFILL";
+    time: DateTime;
+    /** Amount in kopecks. */
+    amount: number;
+    description: string;
 }
 
 declare class VisitDay {
