@@ -13,6 +13,10 @@ class Client {
         this._authenticator = authenticator;
     }
 
+    /**
+     *
+     * @returns {Promise<Profile>}
+     */
     async getProfile() {
         let res = await Axios.get("https://dnevnik.mos.ru/core/api/student_profiles/" + await this._authenticator.getStudentId(), {
             headers: {
@@ -287,6 +291,20 @@ class Client {
                 detail.time = DateTime.fromFormat(bill.date + " " + detail.time, "yyyy-MM-dd HH:mm");
             }
         }
+
+        return report;
+    }
+
+    async getProgress() {
+        let profile = await this.getProfile();
+        let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/programs/parallel_curriculum/"+profile.curricula.id+"?student_id=" + await this._authenticator.getStudentId(), {
+            headers: {
+                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
+                "Auth-Token": await this._authenticator.getToken(),
+                "Profile-Id": await this._authenticator.getStudentId(),
+            }
+        });
+        report = report.data;
 
         return report;
     }

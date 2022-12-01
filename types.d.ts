@@ -117,6 +117,11 @@ export class Client {
      * @param to
      */
     getBilling(from?: DateTime, to?: DateTime): Promise<Billing>;
+
+    /**
+     * Returns education plan and progress.
+     */
+    getProgress(): Promise<Progress>;
 }
 
 export class Utils {
@@ -126,6 +131,38 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare class Progress {
+    title: string;
+    hours: number;
+    //TODO find field type
+    comments: null;
+    //TODO find field type
+    specialization: null;
+    sections: Section[];
+    short_name: string;
+    education_level: string;
+    days_in_week: number;
+    education_form: "FULL_TIME";
+    class_level_id: number;
+    //TODO find field type
+    study_profile: null;
+    is_adapted: boolean;
+}
+
+declare class Section {
+    knowledge_field_name: string;
+    subjects: SubjectHours[];
+}
+
+declare class SubjectHours {
+    subject_name: string;
+    subject_id: number;
+    total_hours: number;
+    passed_hours: number;
+    max_hours_per_week: number;
+    min_hours_per_week: number;
 }
 
 declare class Billing {
