@@ -122,6 +122,11 @@ export class Client {
      * Returns education plan and progress.
      */
     getProgress(): Promise<Progress>;
+
+    /**
+     * Returns array of Additional education groups.
+     */
+    getAdditionalEducationGroups(): Promise<AdditionalEducationGroup[]>;
 }
 
 export class Utils {
@@ -131,6 +136,12 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+//TODO search all fields
+declare class AdditionalEducationGroup {
+    id: number;
+    name: string;
 }
 
 declare class Progress {
