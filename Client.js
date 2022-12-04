@@ -17,8 +17,24 @@ class Client {
      *
      * @returns {Promise<Profile>}
      */
-    async getProfile() {
-        let res = await Axios.get("https://dnevnik.mos.ru/core/api/student_profiles/" + await this._authenticator.getStudentId(), {
+    async getProfile(options = {}) {
+        if(options.with_groups === undefined) options.with_groups = false;
+        if(options.with_parents === undefined) options.with_parents = false;
+        if(options.with_assignments === undefined) options.with_assignments = false;
+        if(options.with_ec_attendances === undefined) options.with_ec_attendances = false;
+        if(options.with_ae_attendances === undefined) options.with_ae_attendances = false;
+        if(options.with_home_based_periods === undefined) options.with_home_based_periods = false;
+        if(options.with_lesson_comments === undefined) options.with_lesson_comments = false;
+        if(options.with_attendances === undefined) options.with_attendances = false;
+        if(options.with_final_marks === undefined) options.with_final_marks = false;
+        if(options.with_marks === undefined) options.with_marks = false;
+        if(options.with_subjects === undefined) options.with_subjects = false;
+        if(options.with_lesson_info === undefined) options.with_lesson_info = false;
+        let query = "";
+        for(let key in options) {
+            if(options[key]) query += key + "=true&";
+        }
+        let res = await Axios.get("https://dnevnik.mos.ru/core/api/student_profiles/" + await this._authenticator.getStudentId() + "?" + query.substring(0, query.length-1), {
             headers: {
                 Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
                 "Auth-Token": await this._authenticator.getToken(),
@@ -39,6 +55,22 @@ class Client {
 
         for (let parent of res.parents) {
             parent.last_sign_in_at = parent.last_sign_in_at == null ? null : Luxon.DateTime.fromFormat(parent.last_sign_in_at, "dd.MM.yyyy HH:mm");
+        }
+
+        for (let group of res.groups) {
+            group.begin_date = group.begin_date == null ? null : Luxon.DateTime.fromFormat(group.begin_date, "dd.MM.yyyy");
+            group.end_date = group.end_date == null ? null : Luxon.DateTime.fromFormat(group.end_date, "dd.MM.yyyy");
+        }
+
+        for (let mark of res.marks) {
+            mark.date = mark.date == null ? null : Luxon.DateTime.fromFormat(mark.date, "dd.MM.yyyy");
+            mark.point_date = mark.point_date == null ? null : Luxon.DateTime.fromFormat(mark.point_date, "dd.MM.yyyy");
+        }
+
+        for (let finalMark of res.final_marks) {
+            finalMark.created_at = finalMark.created_at == null ? null : Luxon.DateTime.fromFormat(finalMark.created_at, "dd.MM.yyyy HH:mm");
+            finalMark.updated_at = finalMark.updated_at == null ? null : Luxon.DateTime.fromFormat(finalMark.updated_at, "dd.MM.yyyy HH:mm");
+            finalMark.deleted_at = finalMark.deleted_at == null ? null : Luxon.DateTime.fromFormat(finalMark.deleted_at, "dd.MM.yyyy HH:mm");
         }
 
         return res;

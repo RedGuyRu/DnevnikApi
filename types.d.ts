@@ -34,7 +34,7 @@ export class Client {
     /**
      * Returns the user profile.
      */
-    getProfile(): Promise<Profile>;
+    getProfile(options?: ProfileOptions): Promise<Profile>;
 
     /**
      * Returns the user average marks.
@@ -136,6 +136,21 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare interface ProfileOptions {
+    with_groups?: boolean;
+    with_parents?: boolean;
+    with_assignments?: boolean;
+    with_ec_attendances?: boolean;
+    with_ae_attendances?: boolean;
+    with_home_based_periods?: boolean;
+    with_lesson_comments?: boolean;
+    with_attendances?: boolean;
+    with_final_marks?: boolean;
+    with_marks?: boolean;
+    with_subjects?: boolean;
+    with_lesson_info?: boolean;
 }
 
 //TODO search all fields
@@ -353,14 +368,14 @@ declare class TeamsLink {
 declare class Teacher {
     "id": number;
     "created_at": DateTime;
-    "updated_at": DateTime|null;
-    "deleted_at": DateTime|null;
+    "updated_at": DateTime | null;
+    "deleted_at": DateTime | null;
     "user_id": number;
-    "gusoev_login": string|null;
+    "gusoev_login": string | null;
     "name": string;
     "school_id": number;
-    "type": "teacher"|"staff";
-    "roles": ("teacher"|"staff")[];
+    "type": "teacher" | "staff";
+    "roles": ("teacher" | "staff")[];
     "mobility": string;
     "education_level_ids": [];
     "deleted": boolean;
@@ -432,9 +447,9 @@ declare class Room {
 
 declare class Building {
     "id": number;
-    "created_at": DateTime|null;
-    "updated_at": DateTime|null;
-    "deleted_at": DateTime|null;
+    "created_at": DateTime | null;
+    "updated_at": DateTime | null;
+    "deleted_at": DateTime | null;
     "name": string;
     "address": string;
     //TODO find field type
@@ -490,7 +505,7 @@ declare class Building {
 declare class Schedule {
     "summary": string;
     "date": DateTime;
-    "activities": (BreakActivity|LessonActivity)[];
+    "activities": (BreakActivity | LessonActivity)[];
     "has_homework": boolean;
 }
 
@@ -527,7 +542,7 @@ declare class Lesson {
     "homework": string;
     "link_types": [];
     "materials_count": Object;
-    "lesson_type": "NORMAL"|"REMOTE";
+    "lesson_type": "NORMAL" | "REMOTE";
     "lesson_education_type": string;
     //TODO find field type
     "evaluation": null;
@@ -562,7 +577,7 @@ declare class ShortTeacher {
 
 declare class LessonMark {
     "id": number;
-    "value": "5"|"4"|"3"|"2";
+    "value": "5" | "4" | "3" | "2";
     "values": MarkValue[];
     "comment": string;
     "weight": number;
@@ -580,12 +595,12 @@ declare class LessonMark {
 declare class Homework {
     "id": number;
     "created_at": DateTime;
-    "updated_at": DateTime|null;
-    "deleted_at": DateTime|null;
+    "updated_at": DateTime | null;
+    "deleted_at": DateTime | null;
     "student_id": number;
     "homework_entry_id": number;
     "student_name": string;
-    "comment": null|string;
+    "comment": null | string;
     "is_ready": boolean;
     "attachments": [];
     "remote_attachments": [];
@@ -596,8 +611,8 @@ declare class Homework {
 declare class HomeworkEntry {
     "id": number;
     "created_at": DateTime;
-    "updated_at": DateTime|null;
-    "deleted_at": DateTime|null;
+    "updated_at": DateTime | null;
+    "deleted_at": DateTime | null;
     "homework_id": number;
     "description": string;
     "duration": number;
@@ -645,7 +660,7 @@ declare class Eom {
 declare class EomUrl {
     url: string;
     url_type: "player" | "view";
-    profile_type: string|null;
+    profile_type: string | null;
 }
 
 declare class Attachment {
@@ -655,8 +670,8 @@ declare class Attachment {
 declare class HomeworkInfo {
     "id": number;
     "created_at": DateTime;
-    "updated_at": DateTime|null;
-    "deleted_at": DateTime|null;
+    "updated_at": DateTime | null;
+    "deleted_at": DateTime | null;
     //TODO find field type
     "deleted_by": null;
     "teacher_id": number;
@@ -680,12 +695,12 @@ declare class HomeworkSubject {
 
 declare class Mark {
     "created_at": DateTime;
-    "updated_at": DateTime|null;
+    "updated_at": DateTime | null;
     "id": number;
     "student_profile_id": number;
     "weight": number;
     "teacher_id": number;
-    "name": "5"|"4"|"3"|"2";
+    "name": "5" | "4" | "3" | "2";
     "comment": string;
     "control_form_id": number;
     //TODO find field type
@@ -700,7 +715,7 @@ declare class Mark {
     "point_date": null;
     "subject_id": number
     "grade_system_id": number;
-    "grade_system_type": "five"| "four" | "three" | "two";
+    "grade_system_type": "five";
     "values": MarkValue[];
     //TODO find field type
     "course_lesson_topic_id": null;
@@ -819,7 +834,7 @@ declare class Profile {
     previously_class_unit: ClassUnit | null;
     curricula: Curricula | null;
     non_attendance: number;
-    mentors: [];
+    mentors: Mentor[];
     ispp_account: number | null;
     previously_profile_id: number | null;
     //TODO find field type
@@ -832,18 +847,94 @@ declare class Profile {
     //TODO find field type
     snils: null;
     last_sign_in_at: DateTime | null;
-    groups: [];
+    groups: Group[];
     parents: Parent[];
-    marks: [];
-    final_marks: [];
+    marks: ProfileMark[];
+    final_marks: FinalMark[];
     attendances: []
     lesson_comments: []
     home_based_periods: []
-    subjects: []
+    subjects: SubjectName[]
     ae_attendances: []
     ec_attendances: []
     assignments: []
     left_on_registry: DateTime | null;
+}
+
+declare class SubjectName {
+    id: number;
+    name: string;
+}
+
+declare class FinalMark {
+    id: number;
+    created_at: DateTime | null;
+    updated_at: DateTime | null;
+    deleted_at: DateTime | null;
+    value: number;
+    //TODO find field type
+    grade_id: null;
+    grade_system_type: "five";
+    academic_year_id: number;
+    //TODO find field type
+    module_id: null;
+    //TODO find field type
+    period_id: null;
+    attestation_period_id: number;
+    is_year_mark: boolean;
+    subject_id: number;
+    student_profile_id: number;
+    attested: boolean;
+    academic_debt: boolean;
+    no_mark: boolean;
+    comment: string;
+    //TODO find field type
+    mark_type: null;
+    year_mark: boolean;
+    //TODO find field type
+    manual_value: null;
+    eliminated: boolean;
+    is_good_reason: boolean;
+}
+
+declare class ProfileMark {
+    id: number;
+    student_profile_id: number;
+    name: string;
+    weight: number;
+    teacher_id: number;
+    comment: string;
+    control_form_id: number;
+    schedule_lesson_id: number;
+    subject_id: number;
+    grade_system_id: number;
+    grade_system_type: string | "five" | "hundred";
+    /**
+     * Seriously, what is this? Mos.ru API returns boolean in string.
+     */
+    point_value: "true" | "false";
+    date: DateTime;
+    point_date: DateTime | null;
+    is_point: boolean;
+    values: MarkValue[];
+    exam: boolean;
+}
+
+declare class Group {
+    user_profile_id: number;
+    id: number;
+    name: string;
+    begin_date: DateTime;
+    end_date: DateTime;
+    subgroup_ids: number[] | null;
+    class_unit_ids: number[] | null;
+    metagroup: boolean;
+    archived: boolean;
+}
+
+export class Mentor {
+    id: number;
+    name: string;
 }
 
 export class ClassUnit {
