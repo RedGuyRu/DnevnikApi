@@ -127,6 +127,11 @@ export class Client {
      * Returns array of Additional education groups.
      */
     getAdditionalEducationGroups(): Promise<AdditionalEducationGroup[]>;
+
+    /**
+     * Returns array of Subjects with marks data.
+     */
+    getPerPeriodMarks(): Promise<SubjectMarks[]>;
 }
 
 export class Utils {
@@ -136,6 +141,39 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare class Period {
+    name: string;
+    marks: [];
+    start: DateTime;
+    end: DateTime;
+    /**
+     * Number in string
+     */
+    avg_five: string;
+    /**
+     * Number in string
+     */
+    avg_hundred: string;
+    /**
+     * Number in string
+     */
+    final_mark: string;
+    is_year_mark: boolean;
+}
+
+declare class SubjectMarks {
+    subject_name: string;
+    periods: Period[];
+    /**
+     * Number in string
+     */
+    avg_five: string;
+    /**
+     * Number in string
+     */
+    avg_hundred: string;
 }
 
 declare interface ProfileOptions {
