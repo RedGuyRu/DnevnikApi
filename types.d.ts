@@ -1,6 +1,7 @@
 // noinspection JSUnusedGlobalSymbols
 
 import {DateTime} from "luxon";
+import {Browser} from "puppeteer";
 
 export class Authenticator {
     /**
@@ -26,6 +27,42 @@ export class Authenticator {
 
 export class PredefinedAuthenticator extends Authenticator {
     constructor(studentId: number, token: string);
+}
+
+export class PuppeteerAuthenticator extends Authenticator {
+    constructor(login: string, password: string, options?: PuppeteerOptions)
+}
+
+declare interface PuppeteerOptions {
+    /**
+     * Puppeteer browser instance, if not passed, new one will be created.
+     */
+    browser?: Browser;
+
+    /**
+     * Use headless mode. By default true.
+     */
+    headless?: boolean;
+
+    /**
+     * Add --no-sandbox argument to puppeteer. By default true.
+     */
+    sandbox?: boolean;
+
+    /**
+     * Add --disable-setuid-sandbox argument to puppeteer. By default true.
+     */
+    disableAutomationControlled?: boolean;
+
+    /**
+     * Array of browser args.
+     */
+    browserArgs?: string[];
+
+    /**
+     * Totp code. If not passed, authenticator will try to use sms.
+     */
+    totp?: string;
 }
 
 export class Client {

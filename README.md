@@ -8,6 +8,9 @@ yarn add dnevnik-mos-ru-api
 ```
 
 ## Поддерживаемые методы
+- **[Авторизация по логину и паролю](#Авторизация-по-логину-и-паролю)**
+- **[Авторизация по токену](#Авторизация-по-токену)**
+- **[Обход СМС через TOTP](#Обход-СМС-через-TOTP)**
 - [Получение профиля пользователя](#Получение-профиля-пользователя)
 - [Получение средних оценок](#Получение-средних-оценок)
 - [Получение текущего академического года](#Получение-текущего-академического-года)
@@ -27,6 +30,29 @@ yarn add dnevnik-mos-ru-api
 - [Получение списка оценок по четвертям](#Получение-списка-оценок-по-четвертям)
 
 ## Примеры использования
+### Авторизация по логину и паролю
+```js
+let auth = new Dnevnik.PuppeteerAuthenticator(process.env.login, process.env.password, {headless: false});
+await auth.init();
+await auth.authenticate();
+let client = new Dnevnik.Client(auth);
+// работа с клиентом
+await auth.close();
+```
+### Авторизация по токену
+```js
+let client = new Dnevnik.Client(new Dnevnik.PredefinedAuthenticator(process.env.student_id, process.env.token));
+// работа с клиентом
+```
+### Обход СМС через TOTP
+```js
+let auth = new Dnevnik.PuppeteerAuthenticator(process.env.login, process.env.password, {headless: false, totp: process.env.totp});
+await auth.init();
+await auth.authenticate();
+let client = new Dnevnik.Client(auth);
+// работа с клиентом
+await auth.close();
+```
 ### Получение профиля пользователя
 ```js
 client.getProfile({with_groups:true, with_ae_attendances: true, with_attendances: true, with_ec_attendances: true, with_assignments: true, with_parents: true, with_subjects: true, with_marks: true, with_final_marks: true, with_home_based_periods: true, with_lesson_info: true, with_lesson_comments: true}).then(e => {

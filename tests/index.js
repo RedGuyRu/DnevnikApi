@@ -1,9 +1,12 @@
 const Dnevnik = require("..");
 const {DateTime} = require("luxon");
 
-let client = new Dnevnik.Client(new Dnevnik.PredefinedAuthenticator(process.env.student_id, process.env.token));
-client.getPerPeriodMarks().then(e => {
-    for (let subjectMark of e) {
-        console.log(subjectMark.subject_name,subjectMark.periods.map(e => e.avg_five).join(" "));
-    }
-}).catch(e => console.log(e))
+(async () => {
+    let auth = new Dnevnik.PuppeteerAuthenticator(process.env.login, process.env.password, {headless: false});
+    await auth.init();
+    await auth.authenticate();
+    let client = new Dnevnik.Client(auth);
+    let profile = await client.getProfile();
+    console.log(profile.class_unit.name);
+    await auth.close();
+})();
