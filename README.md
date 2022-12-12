@@ -18,13 +18,13 @@ yarn add dnevnik-mos-ru-api
 - [Получение информации о преподавателе](#Получение-информации-о-преподавателе)
 - [Получение ссылок на онлайн-уроки](#Получение-ссылок-на-онлайн-уроки)
 - [Получение меню](#Получение-меню)
-- Получение списка уведомлений
-- Получение ответов на тесты Библиотеки МЭШ
-- Получение списка посещаемости
-- Получение детализации баланса
-- Получение информации об обучении
-- Получение списка групп дополнительного образования
-- Получение списка оценок по четвертям
+- [Получение списка уведомлений](#Получение-списка-уведомлений)
+- [Получение ответов на тесты Библиотеки МЭШ](#Получение-ответов-на-тесты-Библиотеки-МЭШ)
+- [Получение списка посещаемости](#Получение-списка-посещаемости)
+- [Получение детализации баланса](#Получение-детализации-баланса)
+- [Получение информации об обучении](#Получение-информации-об-обучении)
+- [Получение списка групп дополнительного образования](#Получение-списка-групп-дополнительного-образования)
+- [Получение списка оценок по четвертям](#Получение-списка-оценок-по-четвертям)
 
 ## Примеры использования
 ### Получение профиля пользователя
@@ -100,4 +100,65 @@ client.getMenu().then(e => {
         console.log(meal.meals.map(e => e.name).join(", "));
     }
 }).catch(e => console.log(e));
+```
+### Получение списка уведомлений
+```js
+client.getNotifications().then(e => {
+    for (let notification of e) {
+        if(notification.event_type === "create_homework") {
+            console.log(notification.new_hw_description);
+        }
+    }
+}).catch(e => console.log(e))
+```
+### Получение ответов на тесты Библиотеки МЭШ
+```js
+Dnevnik.Client.getMeshAnswers(15987430).then(e => {
+    for (let question of e) {
+        console.log(question.question + " " + JSON.stringify(question.answer));
+    }
+}).catch(e => console.log(e))
+```
+### Получение списка посещаемости
+```js
+client.getVisits(DateTime.now().minus({month:1})).then(e => {
+    for (let visitDay of e) {
+        console.log(visitDay.date.toFormat("dd.MM.yyyy"));
+        for (let visit of visitDay.visits) {
+            console.log("- "+visit.in.toFormat("HH:mm"));
+        }
+    }
+}).catch(e => console.log(e))
+```
+### Получение детализации баланса
+```js
+client.getBilling(DateTime.now().minus({month:5}), DateTime.now().plus({month:1})).then(e => {
+    console.log(e.balance/100)
+}).catch(e => console.log(e))
+```
+### Получение информации об обучении
+```js
+client.getProgress().then(e => {
+    for (let section of e.sections) {
+        for (let subject of section.subjects) {
+            console.log(subject.subject_name + " " + subject.passed_hours/subject.total_hours*100 + "%");
+        }
+    }
+}).catch(e => console.log(e))
+```
+### Получение списка групп дополнительного образования
+```js
+client.getAdditionalEducationGroups().then(e => {
+    for (let additionalEducationGroup of e) {
+        console.log(additionalEducationGroup.name);
+    }
+}).catch(e => console.log(e))
+```
+### Получение списка оценок по четвертям
+```js
+client.getPerPeriodMarks().then(e => {
+    for (let subjectMark of e) {
+        console.log(subjectMark.subject_name,subjectMark.periods.map(e => e.avg_five).join(" "));
+    }
+}).catch(e => console.log(e))
 ```
