@@ -169,6 +169,11 @@ export class Client {
      * Returns array of Subjects with marks data.
      */
     getPerPeriodMarks(): Promise<SubjectMarks[]>;
+
+    /**
+     * Returns array of TimePeriods.
+     */
+    getTimePeriods(): Promise<TimePeriod[]>;
 }
 
 export class Utils {
@@ -178,6 +183,35 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare class TimePeriod {
+    id: number;
+    school_id: number;
+    organization_id: string;
+    academic_year_id: number;
+    name: string;
+    comment: string;
+    is_bound: boolean;
+    periods: LearningPeriod[];
+    vacation_period_count: number;
+    learning_period_count: number;
+}
+
+declare class LearningPeriod {
+    id: number;
+    name: string;
+    /**
+     * Hex color.
+     */
+    color: string;
+    vacation: boolean;
+    begin_date: DateTime|null;
+    end_date: DateTime|null;
+    //TODO: find field type
+    periods_schedule: null;
+    periods_schedule_id: number;
+    is_vacation: boolean;
 }
 
 declare class Period {

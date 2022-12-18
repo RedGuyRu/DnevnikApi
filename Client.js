@@ -374,6 +374,26 @@ class Client {
         return report;
     }
 
+    async getTimePeriods() {
+        let report = await Axios.get("https://dnevnik.mos.ru/core/api/periods_schedules?academic_year_id=" + (await Client.getCurrentAcademicYear()).id + "&student_id=" + await this._authenticator.getStudentId(), {
+            headers: {
+                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
+                "Auth-Token": await this._authenticator.getToken(),
+                "Profile-Id": await this._authenticator.getStudentId(),
+            }
+        });
+        report = report.data;
+
+        for (let rep of report) {
+            for (let period of rep.periods) {
+                period.begin_date = period.begin_date==null?null:DateTime.fromFormat(period.begin_date, "yyyy-MM-dd");
+                period.end_date = period.end_date==null?null:DateTime.fromFormat(period.end_date, "yyyy-MM-dd");
+            }
+        }
+
+        return report;
+    }
+
     static async getAcademicYears() {
         let res = await Axios.get("https://dnevnik.mos.ru/core/api/academic_years");
         res = res.data;
