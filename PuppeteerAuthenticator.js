@@ -4,6 +4,7 @@ const debug = require('debug')('PuppeteerAuthenticator');
 const Totp = require("otplib").authenticator;
 const TimeoutError = require("./errors/TimeoutError");
 const IncorrectLoginPassword = require("./errors/IncorrectLoginPassword");
+const TOTPRequested = require("./errors/IncorrectLoginPassword");
 
 class PuppeteerAuthenticator extends Authenticator {
 
@@ -39,7 +40,7 @@ class PuppeteerAuthenticator extends Authenticator {
                 headless: this._options.headless
             });
         } else {
-            this._browser = this._options.browser;
+            this._browser  = this._options.browser;
         }
     }
 
@@ -98,8 +99,8 @@ class PuppeteerAuthenticator extends Authenticator {
         try {
             debug("Loading start page");
             await page.goto('https://school.mos.ru');
-            await page.waitForSelector("#root > div.style_site_wrapper__3M7Hm.undefined > div.style_main-container__3z5Nv > main > section > div > div.style_sec-intro_left__2XBWp > div.style_sec-intro_aside__2Be41 > div > div.style_aside-login__3YTaH > div.style_aside-login_action__2KJI4 > div");
-            await page.click("#root > div.style_site_wrapper__3M7Hm.undefined > div.style_main-container__3z5Nv > main > section > div > div.style_sec-intro_left__2XBWp > div.style_sec-intro_aside__2Be41 > div > div.style_aside-login__3YTaH > div.style_aside-login_action__2KJI4 > div");
+            await page.waitForSelector("#root > div > div.style_main-container__3z5Nv > main > section > div > div.style_sec-intro_left__2XBWp > div.style_sec-intro_aside__2Be41 > div > div.style_aside-login__3YTaH > div.style_aside-login_action__2KJI4 > div");
+            await page.click("#root > div > div.style_main-container__3z5Nv > main > section > div > div.style_sec-intro_left__2XBWp > div.style_sec-intro_aside__2Be41 > div > div.style_aside-login__3YTaH > div.style_aside-login_action__2KJI4 > div");
 
             debug("Loading oauth page");
             await page.waitForSelector("#login");
@@ -122,19 +123,36 @@ class PuppeteerAuthenticator extends Authenticator {
             // sms activation
             page.waitForSelector("#sms-code").then(async () => {
                 if(this._options.totp!==null) {
-                    debug("TOTP request");
+                    debug("SMS request, redirecting to TOTP");
                     await page.waitForSelector("div.twoFa__social--main > div > a:nth-child(2)", {visible: true, hidden: false});
                     await page.click("div.twoFa__social--main > div > a:nth-child(2)")
+                } else {
+                    debug("SMS request, we cannot do anything");
+                    throw new TOTPRequested();
+                }
+            }).catch((err) => {
+                if(err instanceof TOTPRequested) {
+                    throw err;
+                }
+            });
+
+            // totp activation
+            page.waitForSelector("#otp").then(async () => {
+                if(this._options.totp!==null) {
+                    debug("TOTP request");
                     await page.waitForSelector("#otp", {visible: true, hidden: false});
                     await this.trueInputAsyncText(page, () => Totp.generate(this._options.totp), "#otp");
                     debug("TOTP sent");
                     await page.click("#save");
                 } else {
-                    debug("SMS request");
-                    //TODO need to implement
-                    return;
+                    debug("TOTP request, we cannot do anything");
+                    throw new TOTPRequested();
                 }
-            }).catch(() => {});
+            }).catch((err) => {
+                if(err instanceof TOTPRequested) {
+                    throw err;
+                }
+            });
 
             // trust this browser
             page.waitForSelector("body > div.system__layout > main > section > div > section > h1", {visible:true, hidden: false, timeout:60000}).then(async () => {
@@ -154,7 +172,7 @@ class PuppeteerAuthenticator extends Authenticator {
             }),new Promise(async res => {
                 try {
                     await page.waitForRequest((url) => {
-                        return (url.url().startsWith("https://dnevnik.mos.ru/mobile/api/notifications/status?student_id="));
+                        return (url.url().startsWith("https://school.mos.ru/api/family/web/v1/profile?nocache="));
                     }, {timeout: 60000})
                     state = 1;
                     res(1);
