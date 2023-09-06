@@ -108,10 +108,13 @@ export class Client {
     getHomework(from?: DateTime, to?: DateTime): Promise<Homework[]>;
 
     /**
-     * Returns schedule for selected date. If {@link date} is not set, it set to current date.
-     * @param date
+     * Returns schedule for selected date. If {@link from} or {@link to} is not set, it set to current date.
+     * @param from
+     * @param to
+     * @param expand ScheduleExpand
+     * @param person_id UUID of person, if not passed, {@link getProfile} will be called.
      */
-    getSchedule(date: DateTime): Promise<Schedule>;
+    getSchedule(from?: DateTime, to?: DateTime, expand?: ScheduleExpand, person_id?: string): Promise<Schedule>;
 
     /**
      * Returns teacher profile by {@link id}.
@@ -185,6 +188,14 @@ export class Utils {
     static parseMarksWithWeight(mark: MarkWithWidth[]);
 }
 
+declare interface ScheduleExpand {
+    marks?: boolean,
+    homework?: boolean,
+    absence_reason_id?: boolean,
+    health_status?: boolean,
+    nonattendance_reason_id?: boolean
+}
+
 declare class TimePeriod {
     id: number;
     school_id: number;
@@ -206,8 +217,8 @@ declare class LearningPeriod {
      */
     color: string;
     vacation: boolean;
-    begin_date: DateTime|null;
-    end_date: DateTime|null;
+    begin_date: DateTime | null;
+    end_date: DateTime | null;
     //TODO: find field type
     periods_schedule: null;
     periods_schedule_id: number;
@@ -612,10 +623,95 @@ declare class Building {
 }
 
 declare class Schedule {
-    "summary": string;
-    "date": DateTime;
-    "activities": (BreakActivity | LessonActivity)[];
-    "has_homework": boolean;
+    total_count: number;
+    response: ScheduleLesson[]
+}
+
+declare class ScheduleLesson {
+    id: number;
+    author_id?: string;
+    title?: string;
+    description?: string;
+    start_at: DateTime;
+    finish_at: DateTime;
+    is_all_day?: boolean;
+    conference_link?: string;
+    outdoor?: boolean;
+    place?: string;
+    place_latitude?: number
+    place_longitude?: number
+    created_at?: DateTime;
+    updated_at?: DateTime;
+    types?: any;
+    author_name?: string;
+    registration_start_at?: DateTime;
+    registration_end_at?: DateTime;
+    source: "PLAN" | "ORGANIZER";
+
+    /**
+     * Number in string
+     */
+    source_id: string;
+    place_name?: string;
+    contact_name?: string;
+    contact_phone?: string;
+    contact_email?: string;
+    comment?: string;
+    need_document?: any;
+    /**
+     * Number in string
+     */
+    type?: string;
+    format_name?: string;
+    subject_id?: number;
+    subject_name?: string;
+    room_name?: string;
+    room_number?: string;
+    replaced: boolean;
+    replaced_teacher_id?: number;
+    esz_field_id?: any;
+    lesson_type: "NORMAL" | "REMOTE";
+    cource_lesson_type?: string;
+    lesson_education_type?: string;
+    lesson_name?: string;
+    lesson_theme?: string;
+    activities?: any;
+    link_to_join?: string;
+    control?: any;
+    class_unit_ids?: any;
+    class_unit_name?: string;
+    group_id?: number;
+    group_name?: string;
+    external_activities_type?: string;
+    address?: string;
+    place_comment?: string;
+    building_id?: number;
+    building_name?: string;
+    city_building_name?: string;
+    cancelled: boolean;
+    is_missed_lesson?: boolean;
+    is_metagroup?: boolean;
+    absence_reason_id?: number;
+    visible_fake_group?: any;
+    health_status?: string;
+    student_count?: number;
+    attendances?: any;
+    journal_fill?: boolean;
+    comment_count?: number;
+    comments?: any;
+    homework?: ScheduleLessonHomework;
+    materials?: any;
+    marks?: any[];
+}
+
+declare class ScheduleLessonHomework {
+    presence_status_id: number;
+    total_count: number;
+    execute_count?: number;
+    descriptions?: any;
+    link_types?: any;
+    materials?: any;
+    entries?: any;
 }
 
 declare class Activity {
@@ -916,6 +1012,9 @@ declare class Profile {
     created_at: DateTime | null;
     updated_at: DateTime | null;
     deleted_at: DateTime | null;
+    /**
+     * UUID of person
+     */
     person_id: string;
     transferred: boolean;
     school_id: number;

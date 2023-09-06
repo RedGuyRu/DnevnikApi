@@ -18,23 +18,23 @@ class Client {
      * @returns {Promise<Profile>}
      */
     async getProfile(options = {}) {
-        if(options.with_groups === undefined) options.with_groups = false;
-        if(options.with_parents === undefined) options.with_parents = false;
-        if(options.with_assignments === undefined) options.with_assignments = false;
-        if(options.with_ec_attendances === undefined) options.with_ec_attendances = false;
-        if(options.with_ae_attendances === undefined) options.with_ae_attendances = false;
-        if(options.with_home_based_periods === undefined) options.with_home_based_periods = false;
-        if(options.with_lesson_comments === undefined) options.with_lesson_comments = false;
-        if(options.with_attendances === undefined) options.with_attendances = false;
-        if(options.with_final_marks === undefined) options.with_final_marks = false;
-        if(options.with_marks === undefined) options.with_marks = false;
-        if(options.with_subjects === undefined) options.with_subjects = false;
-        if(options.with_lesson_info === undefined) options.with_lesson_info = false;
+        if (options.with_groups === undefined) options.with_groups = false;
+        if (options.with_parents === undefined) options.with_parents = false;
+        if (options.with_assignments === undefined) options.with_assignments = false;
+        if (options.with_ec_attendances === undefined) options.with_ec_attendances = false;
+        if (options.with_ae_attendances === undefined) options.with_ae_attendances = false;
+        if (options.with_home_based_periods === undefined) options.with_home_based_periods = false;
+        if (options.with_lesson_comments === undefined) options.with_lesson_comments = false;
+        if (options.with_attendances === undefined) options.with_attendances = false;
+        if (options.with_final_marks === undefined) options.with_final_marks = false;
+        if (options.with_marks === undefined) options.with_marks = false;
+        if (options.with_subjects === undefined) options.with_subjects = false;
+        if (options.with_lesson_info === undefined) options.with_lesson_info = false;
         let query = "";
-        for(let key in options) {
-            if(options[key]) query += key + "=true&";
+        for (let key in options) {
+            if (options[key]) query += key + "=true&";
         }
-        let res = await Axios.get("https://dnevnik.mos.ru/core/api/student_profiles/" + await this._authenticator.getStudentId() + "?" + query.substring(0, query.length-1), {
+        let res = await Axios.get("https://dnevnik.mos.ru/core/api/student_profiles/" + await this._authenticator.getStudentId() + "?" + query.substring(0, query.length - 1), {
             headers: {
                 Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
                 "Auth-Token": await this._authenticator.getToken(),
@@ -157,26 +157,37 @@ class Client {
         return report.data;
     }
 
-    async getSchedule(date = DateTime.now()) {
-        let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/schedule?student_id=" + await this._authenticator.getStudentId() + "&date=" + date.setZone("Europe/Moscow").toFormat("yyyy-MM-dd"), {
+    async getSchedule(from = DateTime.now(), to = DateTime.now(), expand = {}, person_id = null) {
+        if (person_id == null) {
+            let profile = await this.getProfile();
+            person_id = profile.person_id;
+        }
+        let ex = [];
+        Object.keys(expand).forEach(key => {
+            if (expand[key]) ex.push(key);
+        });
+        let report = await Axios.get(encodeURI(`https://school.mos.ru/api/eventcalendar/v1/api/events?person_ids=${person_id}&begin_date=${from.setZone("Europe/Moscow").toFormat("yyyy-MM-dd")}&end_date=${to.setZone("Europe/Moscow").toFormat("yyyy-MM-dd")}&expand=${ex.join(",")}`), {
             headers: {
                 Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
                 "Auth-Token": await this._authenticator.getToken(),
                 "Profile-Id": await this._authenticator.getStudentId(),
+                "authorization": "Bearer " + await this._authenticator.getToken(),
+                "x-mes-role": "student",
+                "x-mes-subsystem": "familyweb"
             }
         });
 
-        report.data.date = DateTime.fromFormat(report.data.date, "yyyy-MM-dd");
-
-        for (let activity of report.data.activities) {
-            activity.begin_utc = DateTime.fromSeconds(activity.begin_utc);
-            activity.end_utc = DateTime.fromSeconds(activity.end_utc);
-            if (activity.type === "LESSON") {
-                for (let mark of activity.lesson.marks) {
-                    mark.created_at = DateTime.fromISO(mark.created_at);
-                    mark.updated_at = DateTime.fromISO(mark.updated_at);
-                }
-            }
+        for (let event of report.data.response) {
+            event.start_at = DateTime.fromISO(event.start_at);
+            event.finish_at = DateTime.fromISO(event.finish_at);
+            if(event.created_at)
+                event.created_at = DateTime.fromISO(event.created_at);
+            if(event.updated_at)
+                event.updated_at = DateTime.fromISO(event.updated_at);
+            if(event.registration_start_at)
+                event.registration_start_at = DateTime.fromISO(event.registration_start_at);
+            if(event.registration_end_at)
+                event.registration_end_at = DateTime.fromISO(event.registration_end_at);
         }
 
         return report.data;
@@ -213,7 +224,7 @@ class Client {
 
         let links = [];
 
-        for (let lesson of schedule.activities) {
+        for (let lesson of schedule.response) {
             if (lesson.type !== "LESSON") continue;
             if (lesson.lesson.lesson_type !== "REMOTE") continue;
             let report = await Axios.get("https://dnevnik.mos.ru/vcs/links?scheduled_lesson_id=" + lesson.lesson.schedule_item_id, {
@@ -329,7 +340,7 @@ class Client {
 
     async getProgress() {
         let profile = await this.getProfile();
-        let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/programs/parallel_curriculum/"+profile.curricula.id+"?student_id=" + await this._authenticator.getStudentId(), {
+        let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/programs/parallel_curriculum/" + profile.curricula.id + "?student_id=" + await this._authenticator.getStudentId(), {
             headers: {
                 Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
                 "Auth-Token": await this._authenticator.getToken(),
@@ -386,8 +397,8 @@ class Client {
 
         for (let rep of report) {
             for (let period of rep.periods) {
-                period.begin_date = period.begin_date==null?null:DateTime.fromFormat(period.begin_date, "yyyy-MM-dd");
-                period.end_date = period.end_date==null?null:DateTime.fromFormat(period.end_date, "yyyy-MM-dd");
+                period.begin_date = period.begin_date == null ? null : DateTime.fromFormat(period.begin_date, "yyyy-MM-dd");
+                period.end_date = period.end_date == null ? null : DateTime.fromFormat(period.end_date, "yyyy-MM-dd");
             }
         }
 
