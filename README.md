@@ -1,6 +1,8 @@
 # dnevnik-mos-ru-api
 Библиотека для доступа к API сайта [Московской электронной Школы](https://school.mos.ru/)
 
+Вы можете задать любые вопросы по этой библиотеке в telegram https://t.me/sleeplesscodechat или discord https://discord.gg/RbQYBxje4p
+
 ## Установка
 ```bash
 npm install dnevnik-mos-ru-api
