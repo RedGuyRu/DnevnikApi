@@ -1,6 +1,6 @@
 {
   "name": "dnevnik-mos-ru-api",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -20,5 +20,8 @@
   },
   "devDependencies": {
     "@types/luxon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=16.3.0"
   }
 }
