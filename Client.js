@@ -241,13 +241,24 @@ class Client {
         return links;
     }
 
-    async getMenu(date = DateTime.now()) {
+    async getPersonDetails() {
         let profile = await this.getProfile();
-        let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/v1.0/menu?date=" + date.setZone("Europe/Moscow").toFormat("yyyy-MM-dd") + "&contract_id=" + profile.ispp_account, {
+        let report = await Axios.get(`https://school.mos.ru/api/family/mobile/v1/person-details/?contingent_guid=${profile.person_id}&profile_id=${await this._authenticator.getStudentId()}`, {
             headers: {
-                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
-                "Auth-Token": await this._authenticator.getToken(),
-                "Profile-Id": await this._authenticator.getStudentId(),
+                "x-mes-subsystem": "familymp",
+                "auth-token": await this._authenticator.getToken(),
+            }
+        });
+        report = report.data;
+
+        return report;
+    }
+
+    async getMenu(date = DateTime.now()) {
+        let report = await Axios.get("https://school.mos.ru/api/family/mobile/v1/menu/buffet/?date="+date.toFormat("yyyy-MM-dd"), {
+            headers: {
+                "x-mes-subsystem": "familymp",
+                "auth-token": await this._authenticator.getToken(),
             }
         });
         report = report.data;

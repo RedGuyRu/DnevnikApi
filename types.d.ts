@@ -23,6 +23,11 @@ export class Authenticator {
      * Returns user token.
      */
     getToken(): Promise<string | null>;
+
+    /**
+     * Saves data to file.
+     */
+    save(file: string): Promise<void>;
 }
 
 export class PredefinedAuthenticator extends Authenticator {
@@ -31,6 +36,10 @@ export class PredefinedAuthenticator extends Authenticator {
 
 export class PuppeteerAuthenticator extends Authenticator {
     constructor(login: string, password: string, options?: PuppeteerOptions)
+}
+
+export class FileAuthenticator extends Authenticator {
+    constructor(file: string)
 }
 
 declare interface PuppeteerOptions {
@@ -177,6 +186,11 @@ export class Client {
      * Returns array of TimePeriods.
      */
     getTimePeriods(): Promise<TimePeriod[]>;
+
+    /**
+     * Returns person details of user.
+     */
+    getPersonDetails(): Promise<PersonDetails>;
 }
 
 export class Utils {
@@ -186,6 +200,37 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare interface PersonDetails {
+    last_name: string,
+    first_name: string,
+    birthdate: DateTime,
+    sex: 0 | 1,
+    documents: PersonDocument
+}
+
+declare interface PersonDocument {
+    document_type_id: number,
+    series: string
+    issue_date: DateTime,
+    issuer: string,
+    number: string
+}
+
+declare interface OMS extends PersonDocument {
+    document_type_id: 124,
+    issuer: '',
+    series: null
+}
+
+declare interface Passport extends PersonDocument {
+    document_type_id: 15
+}
+
+declare interface BirthDocument extends PersonDocument {
+    document_type_id: 3,
+    issuer: ''
 }
 
 declare interface ScheduleExpand {

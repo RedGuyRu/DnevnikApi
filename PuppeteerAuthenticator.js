@@ -172,7 +172,7 @@ class PuppeteerAuthenticator extends Authenticator {
             }),new Promise(async res => {
                 try {
                     await page.waitForRequest((url) => {
-                        return (url.url().startsWith("https://school.mos.ru/api/family/web/v1/profile?nocache="));
+                        return (url.url().startsWith("https://school.mos.ru/api/family/web/v1/profile"));
                     }, {timeout: 60000})
                     state = 1;
                     res(1);

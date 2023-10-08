@@ -5,5 +5,6 @@ module.exports = {
     Utils: require("./Utils"),
     PuppeteerAuthenticator: require("./PuppeteerAuthenticator"),
     IncorrectLoginPassword: require("./errors/IncorrectLoginPassword"),
-    TimeoutError: require("./errors/TimeoutError")
+    TimeoutError: require("./errors/TimeoutError"),
+    FileAuthenticator: require("./FileAuthenticator"),
 }
