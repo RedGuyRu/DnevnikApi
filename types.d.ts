@@ -191,6 +191,11 @@ export class Client {
      * Returns person details of user.
      */
     getPersonDetails(): Promise<PersonDetails>;
+
+    /**
+     * Returns number of unread and important chats.
+     */
+    getUnreadAndImportantMessages(): Promise<UnreadAndImportant>;
 }
 
 export class Utils {
@@ -200,6 +205,11 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare interface UnreadAndImportant {
+    total_unread: number;
+    important_unread: number;
 }
 
 declare interface PersonDetails {

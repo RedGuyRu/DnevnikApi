@@ -246,7 +246,19 @@ class Client {
         let report = await Axios.get(`https://school.mos.ru/api/family/mobile/v1/person-details/?contingent_guid=${profile.person_id}&profile_id=${await this._authenticator.getStudentId()}`, {
             headers: {
                 "x-mes-subsystem": "familymp",
-                "auth-token": await this._authenticator.getToken(),
+                "auth-token": await this._authenticator.getToken()
+            }
+        });
+        report = report.data;
+
+        return report;
+    }
+
+    async getUnreadAndImportantMessages() {
+        let profile = await this.getProfile();
+        let report = await Axios.get(`https://dnevnik.mos.ru/core/api/messages/count_unread_and_important`, {
+            headers: {
+                "Auth-Token": await this._authenticator.getToken()
             }
         });
         report = report.data;
