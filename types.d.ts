@@ -197,7 +197,14 @@ export class Client {
      */
     getUnreadAndImportantMessages(): Promise<UnreadAndImportant>;
 
+    /**
+     * Returns schedule for selected range of days.
+     * @param from DateTime, is not set, it set to current date.
+     * @param to DateTime, is not set, it set to current date.
+     */
     getSchedule(from?: DateTime, to?: DateTime): Promise<Schedule>;
+
+    getScheduleShort(dates?: DateTime[]): Promise<ShortSchedule[]>;
 }
 
 export class Utils {
@@ -207,6 +214,37 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare interface ShortSchedule {
+    date: DateTime;
+    lessons: ShortLesson[];
+}
+
+declare interface ShortLesson {
+    lesson_id: number;
+    /**
+     * hh:mm
+     */
+    begin_time: string;
+
+    /**
+     * hh:mm
+     */
+    end_time: string;
+    bell_id: number;
+    subject_name: string;
+    lesson_type: "NORMAL"|"REMOTE";
+    group_id: number;
+    group_name: string;
+    lesson_education_type: "OO";
+    //TODO: find field type
+    evaluation: null;
+    absence_reason_id: number;
+    subject_id: number;
+    lesson_name: string;
+    schedule_item_id: number;
+    is_virtual: boolean;
 }
 
 declare interface Schedule {

@@ -273,6 +273,22 @@ class Client {
         return report;
     }
 
+    async getScheduleShort(dates = [DateTime.now()]) {
+        let report = await Axios.get(`https://school.mos.ru/api/family/mobile/v1/schedule/short/?student_id=${await this._authenticator.getStudentId()}&dates=${dates.map(date => date.toFormat("yyyy-MM-dd")).join(",")}`, {
+            headers: {
+                "x-mes-subsystem": "familymp",
+                "auth-token": await this._authenticator.getToken()
+            }
+        });
+        report = report.data.payload;
+
+        report.forEach(day => {
+            day.date = DateTime.fromFormat(day.date, "yyyy-MM-dd");
+        })
+
+        return report;
+    }
+
     async getUnreadAndImportantMessages() {
         let report = await Axios.get(`https://dnevnik.mos.ru/core/api/messages/count_unread_and_important`, {
             headers: {
