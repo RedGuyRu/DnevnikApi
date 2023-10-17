@@ -2,7 +2,7 @@ const Axios = require('axios');
 const Authenticator = require('./Authenticator');
 const Luxon = require('luxon');
 const Utils = require('./Utils');
-const {DateTime} = require("luxon");
+const {DateTime, Interval} = require("luxon");
 const AnswersParser = require("./AnswersParser");
 
 class Client {
@@ -157,7 +157,7 @@ class Client {
         return report.data;
     }
 
-    async getSchedule(from = DateTime.now(), to = DateTime.now(), expand = {}, person_id = null) {
+    async getEvents(from = DateTime.now(), to = DateTime.now(), expand = {}, person_id = null) {
         if (person_id == null) {
             let profile = await this.getProfile();
             person_id = profile.person_id;
@@ -254,8 +254,26 @@ class Client {
         return report;
     }
 
+    async getSchedule(from = DateTime.now(), to = DateTime.now()) {
+        let report = await Axios.get(`https://school.mos.ru/api/family/mobile/v1/schedule/?student_id=${await this._authenticator.getStudentId()}&date_to=${to.toFormat("yyyy-MM-dd")}&date_from=${from.toFormat("yyyy-MM-dd")}`, {
+            headers: {
+                "x-mes-subsystem": "familymp",
+                "auth-token": await this._authenticator.getToken()
+            }
+        });
+        report = report.data;
+
+        report.date = DateTime.fromFormat(report.date, "yyyy-MM-dd");
+
+        report.activities.forEach(activity => {
+            if(activity.begin_utc) activity.begin_utc = DateTime.fromSeconds(activity.begin_utc,{zone:"utc"});
+            if(activity.end_utc) activity.end_utc = DateTime.fromSeconds(activity.end_utc,{zone:"utc"});
+        })
+
+        return report;
+    }
+
     async getUnreadAndImportantMessages() {
-        let profile = await this.getProfile();
         let report = await Axios.get(`https://dnevnik.mos.ru/core/api/messages/count_unread_and_important`, {
             headers: {
                 "Auth-Token": await this._authenticator.getToken()

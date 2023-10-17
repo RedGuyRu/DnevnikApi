@@ -117,13 +117,13 @@ export class Client {
     getHomework(from?: DateTime, to?: DateTime): Promise<Homework[]>;
 
     /**
-     * Returns schedule for selected date. If {@link from} or {@link to} is not set, it set to current date.
+     * Returns events for selected date. If {@link from} or {@link to} is not set, it set to current date.
      * @param from
      * @param to
      * @param expand ScheduleExpand
      * @param person_id UUID of person, if not passed, {@link getProfile} will be called.
      */
-    getSchedule(from?: DateTime, to?: DateTime, expand?: ScheduleExpand, person_id?: string): Promise<Schedule>;
+    getEvents(from?: DateTime, to?: DateTime, expand?: ScheduleExpand, person_id?: string): Promise<Events>;
 
     /**
      * Returns teacher profile by {@link id}.
@@ -196,6 +196,8 @@ export class Client {
      * Returns number of unread and important chats.
      */
     getUnreadAndImportantMessages(): Promise<UnreadAndImportant>;
+
+    getSchedule(from?: DateTime, to?: DateTime): Promise<Schedule>;
 }
 
 export class Utils {
@@ -205,6 +207,13 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare interface Schedule {
+    summary: string;
+    date: DateTime;
+    has_homework: boolean;
+    activities: Activity
 }
 
 declare interface UnreadAndImportant {
@@ -677,7 +686,7 @@ declare class Building {
     "org_territory": null
 }
 
-declare class Schedule {
+declare class Events {
     total_count: number;
     response: ScheduleLesson[]
 }

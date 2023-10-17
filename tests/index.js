@@ -23,7 +23,8 @@ const {DateTime} = require("luxon");
     //console.log(await client.getTeamsLinks(DateTime.now()))
     //console.log(await client.getMenu(DateTime.now().minus({day:2})))
     //console.log(await client.getPersonDetails());
-    console.log(await client.getUnreadAndImportantMessages());
+    //console.log(await client.getUnreadAndImportantMessages());
+    console.log(await client.getSchedule());
     //TODO: find new endpoint console.log(await client.getNotifications());
     //TODO: find new endpoint console.log(await client.getVisits(DateTime.now(),DateTime.now()));
     //TODO: find new endpoint console.log(await client.getBilling(DateTime.now(), DateTime.now()));
