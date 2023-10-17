@@ -204,7 +204,16 @@ export class Client {
      */
     getSchedule(from?: DateTime, to?: DateTime): Promise<Schedule>;
 
+    /**
+     * Returns shorten version of getSchedule without breaks and detailed info
+     * @param dates array of days
+     */
     getScheduleShort(dates?: DateTime[]): Promise<ShortSchedule[]>;
+
+    /**
+     * Returns missed study days
+     */
+    getAttendance(): Promise<Attendance>;
 }
 
 export class Utils {
@@ -214,6 +223,27 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare interface Attendance {
+    days_count: number;
+    year_description: string;
+    attendance: AttendanceDay[];
+}
+
+declare interface AttendanceDay {
+    date: DateTime;
+    summary: string;
+    notified: boolean | null;
+    //TODO: find field type
+    lessons: [];
+    description: string | null;
+    //TODO: find field type
+    reason_id: any | null;
+    //TODO: find field type
+    is_system: any | null;
+    //TODO: find field type
+    parent_profile_id: any | null;
 }
 
 declare interface ShortSchedule {

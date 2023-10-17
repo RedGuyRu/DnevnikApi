@@ -289,6 +289,20 @@ class Client {
         return report;
     }
 
+    async getAttendance() {
+        let report = await Axios.get(`https://school.mos.ru/api/family/mobile/v1/attendance/?student_id=${await this._authenticator.getStudentId()}`, {
+            headers: {
+                "x-mes-subsystem": "familymp",
+                "auth-token": await this._authenticator.getToken()
+            }
+        });
+        report = report.data;
+        report.attendance.forEach(attendance => {
+            attendance.date = DateTime.fromFormat(attendance.date, "yyyy-MM-dd")
+        })
+        return report;
+    }
+
     async getUnreadAndImportantMessages() {
         let report = await Axios.get(`https://dnevnik.mos.ru/core/api/messages/count_unread_and_important`, {
             headers: {
