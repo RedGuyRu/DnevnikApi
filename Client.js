@@ -303,6 +303,62 @@ class Client {
         return report;
     }
 
+    async postAttendance(date, description = "болезнь", reason_id = 6) {
+        let report = await Axios.post(`https://school.mos.ru/api/family/mobile/v1/attendance/`, {
+            student_id: await this._authenticator.getStudentId(),
+            notifications: [{
+                date: date.toFormat("yyyy-MM-dd"),
+                reason_id,
+                description
+            }]
+        },{
+            headers: {
+                "x-mes-subsystem": "familymp",
+                "auth-token": await this._authenticator.getToken()
+            }
+        });
+        report = report.data;
+        return report;
+    }
+
+    async deleteAttendance(date) {
+        let report = await Axios.delete(`https://school.mos.ru/api/family/mobile/v1/attendance/`, {
+            student_id: await this._authenticator.getStudentId(),
+            notifications: [{
+                date: date.toFormat("yyyy-MM-dd")
+            }]
+        },{
+            headers: {
+                "x-mes-subsystem": "familymp",
+                "auth-token": await this._authenticator.getToken()
+            }
+        });
+        report = report.data;
+        return report;
+    }
+
+    async getHomeworks(from = DateTime.now(), to = DateTime.now()) {
+        let report = await Axios.get(`https://school.mos.ru/api/family/mobile/v1/homeworks/?student_id=${await this._authenticator.getStudentId()}&from=${from.toFormat("yyyy-MM-dd")}&to=${to.toFormat("yyyy-MM-dd")}`, {
+            headers: {
+                "x-mes-subsystem": "familymp",
+                "auth-token": await this._authenticator.getToken()
+            }
+        });
+        report = report.data.payload;
+        return report;
+    }
+
+    async getHomeworksShort(from = DateTime.now(), to = DateTime.now()) {
+        let report = await Axios.get(`https://school.mos.ru/api/family/mobile/v1/homeworks/short?student_id=${await this._authenticator.getStudentId()}&from=${from.toFormat("yyyy-MM-dd")}&to=${to.toFormat("yyyy-MM-dd")}`, {
+            headers: {
+                "x-mes-subsystem": "familymp",
+                "auth-token": await this._authenticator.getToken()
+            }
+        });
+        report = report.data.payload;
+        return report;
+    }
+
     async getUnreadAndImportantMessages() {
         let report = await Axios.get(`https://dnevnik.mos.ru/core/api/messages/count_unread_and_important`, {
             headers: {

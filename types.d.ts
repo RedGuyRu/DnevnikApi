@@ -143,6 +143,7 @@ export class Client {
 
     /**
      * Return array of Notifications.
+     * @deprecated Not working for now
      */
     getNotifications(): Promise<Notification[]>;
 
@@ -150,6 +151,7 @@ export class Client {
      * Returns array of Answers on selected {@link variant}.
      * @param variant
      * @param context_type
+     * @deprecated Bug fixed
      */
     static getMeshAnswers(variant: number, context_type?: "homework"): Promise<Question[]>;
 
@@ -157,6 +159,7 @@ export class Client {
      * Return array of Visits. If {@link from} or {@link to} is not set, it set to current date.
      * @param from
      * @param to
+     * @deprecated Not working for now
      */
     getVisits(from?: DateTime, to?: DateTime): Promise<VisitDay[]>;
 
@@ -164,11 +167,13 @@ export class Client {
      * Returns billing details, such as balance, payment history.
      * @param from
      * @param to
+     * @deprecated Not working for now
      */
     getBilling(from?: DateTime, to?: DateTime): Promise<Billing>;
 
     /**
      * Returns education plan and progress.
+     * @deprecated Not working for now
      */
     getProgress(): Promise<Progress>;
 
@@ -214,6 +219,33 @@ export class Client {
      * Returns missed study days
      */
     getAttendance(): Promise<Attendance>;
+
+    /**
+     * Creates attendance for selected day. This action available only for parents!
+     * @param date attendance day
+     * @param description attendance reason, "болезнь" for default
+     * @param reason_id id of attendance reason, 6 for default
+     */
+    postAttendance(date: DateTime, description?: string, reason_id?: number): Promise<any>;
+
+    /**
+     * Deletes attendance for selected day. This action available only for parents!
+     */
+    deleteAttendance(date: DateTime): Promise<any>;
+
+    /**
+     * Returns array of homeworks for selected period. If {@link from} or {@link to} not set, it set to current date.
+     * @param from DateTime
+     * @param to DateTime
+     */
+    getHomeworks(from?: DateTime, to?: DateTime): Promise<ModernHomework[]>;
+
+    /**
+     * Returns array of homeworks for selected period. If {@link from} or {@link to} not set, it set to current date.
+     * @param from DateTime
+     * @param to DateTime
+     */
+    getHomeworksShort(from?: DateTime, to?: DateTime): Promise<ModernShortHomework[]>;
 }
 
 export class Utils {
@@ -223,6 +255,34 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare interface ModernHomework {
+    description: string;
+    comments: any[];
+    homework_entry_student_id: number;
+    attachments: any[];
+    date: DateTime;
+    date_assigned_on: DateTime;
+    subject_name: string;
+    lesson_date_time: DateTime;
+    additional_materials: any[];
+    is_done: boolean;
+    has_teacher_answer: boolean;
+    subject_id: number;
+}
+
+declare interface ModernShortHomework {
+    description: string;
+    subject_id: number;
+    subject_name: string;
+    date: DateTime;
+    data_assigned_on: DateTime;
+    homework_entry_student_id: number;
+    materials_answer: any[];
+    id_done: boolean;
+    type:'oo';
+    has_teacher_answer: boolean
 }
 
 declare interface Attendance {
