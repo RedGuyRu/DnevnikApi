@@ -8,12 +8,13 @@ const {DateTime} = require("luxon");
     await auth.init();
     await auth.authenticate();
     let client = new Dnevnik.Client(auth);
-    //await auth.save("auth.json");
+    await auth.refresh();
+    await auth.save("auth.json");
 
     //console.log(await Dnevnik.Client.getAcademicYears());
     //console.log(await Dnevnik.Client.getCurrentAcademicYear());
 
-    //console.log(await client.getProfile());
+    console.log(await client.getProfile());
     //console.log(await client.getAverageMarks());
     //console.log(await client.getSubjects());
     //console.log(await client.getMarks(DateTime.now().minus({days: 7}), DateTime.now()));
@@ -30,7 +31,7 @@ const {DateTime} = require("luxon");
     //console.log(await client.postAttendance(DateTime.now().plus({hour:5}), "Больничный"));
     //console.log(await client.deleteAttendance(DateTime.now().plus({hour:5})));
     //console.log(await client.getHomeworks(DateTime.now().minus({day:7}), DateTime.now()));
-    console.log(await client.getHomeworksShort(DateTime.now().minus({day:7}), DateTime.now()));
+    //console.log(await client.getHomeworksShort(DateTime.now().minus({day:7}), DateTime.now()));
     //TODO: find new endpoint console.log(await client.getNotifications());
     //TODO: find new endpoint console.log(await client.getVisits(DateTime.now(),DateTime.now()));
     //TODO: find new endpoint console.log(await client.getBilling(DateTime.now(), DateTime.now()));

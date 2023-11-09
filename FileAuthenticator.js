@@ -24,6 +24,11 @@ class PredefinedAuthenticator extends Authenticator {
     async getToken() {
         return this._token;
     }
+
+
+    async _setToken(token) {
+        this._token = token;
+    }
 }
 
 module.exports = PredefinedAuthenticator;

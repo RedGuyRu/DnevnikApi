@@ -252,6 +252,11 @@ class PuppeteerAuthenticator extends Authenticator {
             throw e;
         }
     }
+
+
+    async _setToken(token) {
+        this._token = token;
+    }
 }
 
 module.exports = PuppeteerAuthenticator;
