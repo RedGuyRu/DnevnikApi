@@ -14,12 +14,13 @@ const {DateTime} = require("luxon");
     //console.log(await Dnevnik.Client.getAcademicYears());
     //console.log(await Dnevnik.Client.getCurrentAcademicYear());
 
-    console.log(await client.getProfile());
+    console.log(await client.getSession());
+    //console.log(await client.getProfile());
     //console.log(await client.getAverageMarks());
     //console.log(await client.getSubjects());
     //console.log(await client.getMarks(DateTime.now().minus({days: 7}), DateTime.now()));
     //console.log(await client.getHomework(DateTime.now(),DateTime.now()));
-    //console.log(await client.getSchedule(DateTime.now(), DateTime.now(), {marks: true, absence_reason_id: true, nonattendance_reason_id: true, health_status: true, homework: true}));
+    //console.log(await client.getSchedule(DateTime.now().minus({days: 3})));
     //console.log(await client.getTeacher(4974274));
     //console.log(await client.getTeamsLinks(DateTime.now()))
     //console.log(await client.getMenu(DateTime.now().minus({day:2})))

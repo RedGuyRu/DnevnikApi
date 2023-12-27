@@ -254,8 +254,8 @@ class Client {
         return report;
     }
 
-    async getSchedule(from = DateTime.now(), to = DateTime.now()) {
-        let report = await Axios.get(`https://school.mos.ru/api/family/mobile/v1/schedule/?student_id=${await this._authenticator.getStudentId()}&date_to=${to.toFormat("yyyy-MM-dd")}&date_from=${from.toFormat("yyyy-MM-dd")}`, {
+    async getSchedule(date = DateTime.now()) {
+        let report = await Axios.get(`https://school.mos.ru/api/family/mobile/v1/schedule/?student_id=${await this._authenticator.getStudentId()}&date=${date.toFormat("yyyy-MM-dd")}`, {
             headers: {
                 "x-mes-subsystem": "familymp",
                 "auth-token": await this._authenticator.getToken()
@@ -529,6 +529,18 @@ class Client {
             }
         }
 
+        return report;
+    }
+
+    async getSession() {
+        let report = await Axios.post("https://dnevnik.mos.ru/lms/api/sessions", {
+            auth_token: await this._authenticator.getToken(),
+        }, {
+            headers: {
+                Cookie: "auth_token=" + await this._authenticator.getToken() + ";",
+            }
+        });
+        report = report.data;
         return report;
     }
 

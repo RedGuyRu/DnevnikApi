@@ -203,11 +203,10 @@ export class Client {
     getUnreadAndImportantMessages(): Promise<UnreadAndImportant>;
 
     /**
-     * Returns schedule for selected range of days.
-     * @param from DateTime, is not set, it set to current date.
-     * @param to DateTime, is not set, it set to current date.
+     * Returns schedule for selected day.
+     * @param date DateTime, is not set, it set to current date.
      */
-    getSchedule(from?: DateTime, to?: DateTime): Promise<Schedule>;
+    getSchedule(date?: DateTime): Promise<Schedule>;
 
     /**
      * Returns shorten version of getSchedule without breaks and detailed info
@@ -246,6 +245,11 @@ export class Client {
      * @param to DateTime
      */
     getHomeworksShort(from?: DateTime, to?: DateTime): Promise<ModernShortHomework[]>;
+
+    /**
+     * Returns active session information.
+     */
+    getSession(): Promise<any>;
 }
 
 export class Utils {
@@ -255,6 +259,45 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare interface Session {
+    /**
+     * Profile ID.
+     */
+    id: number;
+    email: string;
+    snils: string;
+    profiles: SessionProfile[];
+    guid: string;
+    first_name: string;
+    last_name: string;
+    middle_name: string;
+    phone_number: string;
+    authentication_token: string;
+    person_id: string;
+    password_change_required: boolean;
+    regional_auth: string;
+    date_of_birth: DateTime;
+    sex: 'male'|string;
+}
+
+declare interface SessionProfile {
+    /**
+     * Student ID.
+     */
+    id: number;
+    type: 'student' | 'parent' | 'teacher';
+    roles: any[];
+    /**
+     * Profile ID.
+     */
+    user_id: number;
+    agree_pers_data: boolean;
+    school_id: number;
+    school_shortname: string;
+    subject_ids: any[];
+    organization_id: string;
 }
 
 declare interface ModernHomework {
