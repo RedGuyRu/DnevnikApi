@@ -383,11 +383,11 @@ class Client {
     }
 
     async getNotifications() {
-        let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/notifications/search?student_id=" + await this._authenticator.getStudentId(), {
+        let report = await Axios.get("https://school.mos.ru/api/family/mobile/v1/notifications/search?student_id=" + await this._authenticator.getStudentId(), {
             headers: {
-                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
-                "Auth-Token": await this._authenticator.getToken(),
+                "Auth-token": await this._authenticator.getToken(),
                 "Profile-Id": await this._authenticator.getStudentId(),
+                "x-mes-subsystem": "familymp"
             }
         });
         report = report.data;

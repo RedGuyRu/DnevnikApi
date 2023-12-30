@@ -143,7 +143,6 @@ export class Client {
 
     /**
      * Return array of Notifications.
-     * @deprecated Not working for now
      */
     getNotifications(): Promise<Notification[]>;
 
