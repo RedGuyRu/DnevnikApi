@@ -1,7 +1,7 @@
 const Authenticator = require('./Authenticator');
 const fs = require('fs');
 
-class PredefinedAuthenticator extends Authenticator {
+class FileAuthenticator extends Authenticator {
 
     _studentId;
     _token;
@@ -31,4 +31,4 @@ class PredefinedAuthenticator extends Authenticator {
     }
 }
 
-module.exports = PredefinedAuthenticator;
+module.exports = FileAuthenticator;

@@ -532,6 +532,24 @@ class Client {
         return report;
     }
 
+    async getSchoolInfo() {
+        let profile = await this.getProfile();
+        let report = await Axios.get(`https://school.mos.ru/api/family/web/v1/school_info?class_unit_id=${profile.class_unit.id}&school_id=${profile.school_id}`, {
+            headers: {
+                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
+                "Auth-Token": await this._authenticator.getToken(),
+                "Profile-Id": await this._authenticator.getStudentId(),
+                "authorization": await this._authenticator.getToken(),
+                "profile-type": "student",
+                "profile-id": await this._authenticator.getStudentId(),
+                "x-mes-subsystem": "familyweb"
+            }
+        });
+        report = report.data;
+
+        return report;
+    }
+
     async getSession() {
         let report = await Axios.post("https://dnevnik.mos.ru/lms/api/sessions", {
             auth_token: await this._authenticator.getToken(),

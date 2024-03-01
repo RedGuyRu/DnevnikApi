@@ -249,6 +249,11 @@ export class Client {
      * Returns active session information.
      */
     getSession(): Promise<any>;
+
+    /**
+     * Returns school info
+     */
+    getSchoolInfo(): Promise<SchoolInfo>;
 }
 
 export class Utils {
@@ -258,6 +263,38 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare interface SchoolInfo {
+    id: number;
+    name: string;
+    type: "Образовательное учреждение среднего профессионального образования" | string;
+    principal: string;
+    classroom_teachers: FIO[];
+    address: Address;
+    phone: string;
+    email: string;
+    website_link: string;
+    teachers: FIOSubjects;
+    branches: Branch[];
+}
+
+declare interface Branch {
+    name: string;
+    type: "Образовательное учреждение среднего профессионального образования" | string;
+    address: string;
+    is_main_building: boolean;
+    is_student_building: boolean;
+}
+
+declare interface FIOSubjects extends FIO {
+    subject_names: string[];
+}
+
+declare interface Address {
+    country: string;
+    district: string;
+    address: string;
 }
 
 declare interface Session {
@@ -278,7 +315,7 @@ declare interface Session {
     password_change_required: boolean;
     regional_auth: string;
     date_of_birth: DateTime;
-    sex: 'male'|string;
+    sex: 'male' | string;
 }
 
 declare interface SessionProfile {
@@ -323,7 +360,7 @@ declare interface ModernShortHomework {
     homework_entry_student_id: number;
     materials_answer: any[];
     id_done: boolean;
-    type:'oo';
+    type: 'oo';
     has_teacher_answer: boolean
 }
 
@@ -366,7 +403,7 @@ declare interface ShortLesson {
     end_time: string;
     bell_id: number;
     subject_name: string;
-    lesson_type: "NORMAL"|"REMOTE";
+    lesson_type: "NORMAL" | "REMOTE";
     group_id: number;
     group_name: string;
     lesson_education_type: "OO";

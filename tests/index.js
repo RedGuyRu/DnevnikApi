@@ -33,7 +33,7 @@ const {DateTime} = require("luxon");
     //console.log(await client.deleteAttendance(DateTime.now().plus({hour:5})));
     //console.log(await client.getHomeworks(DateTime.now().minus({day:7}), DateTime.now()));
     //console.log(await client.getHomeworksShort(DateTime.now().minus({day:7}), DateTime.now()));
-    console.log(await client.getNotifications());
+    console.log(await client.getSchoolInfo());
     //TODO: find new endpoint console.log(await client.getVisits(DateTime.now(),DateTime.now()));
     //TODO: find new endpoint console.log(await client.getBilling(DateTime.now(), DateTime.now()));
     //TODO: find new endpoint console.log(await client.getProgress());
