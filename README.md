@@ -36,13 +36,13 @@ yarn add dnevnik-mos-ru-api
 let auth = new Dnevnik.PuppeteerAuthenticator(process.env.login, process.env.password, {headless: false});
 await auth.init();
 await auth.authenticate();
-let client = new Dnevnik.Client(auth);
+let client = new Dnevnik.DnevnikClient(auth);
 // работа с клиентом
 await auth.close();
 ```
 ### Авторизация по токену
 ```js
-let client = new Dnevnik.Client(new Dnevnik.PredefinedAuthenticator(process.env.student_id, process.env.token));
+let client = new Dnevnik.DnevnikClient(new Dnevnik.PredefinedAuthenticator(process.env.student_id, process.env.token));
 // работа с клиентом
 ```
 ### Обход СМС через TOTP
@@ -50,7 +50,7 @@ let client = new Dnevnik.Client(new Dnevnik.PredefinedAuthenticator(process.env.
 let auth = new Dnevnik.PuppeteerAuthenticator(process.env.login, process.env.password, {headless: false, totp: process.env.totp});
 await auth.init();
 await auth.authenticate();
-let client = new Dnevnik.Client(auth);
+let client = new Dnevnik.DnevnikClient(auth);
 // работа с клиентом
 await auth.close();
 ```
@@ -70,7 +70,7 @@ client.getAverageMarks().then(e => {
 ```
 ### Получение текущего академического года
 ```js
-Client.getCurrentAcademicYear().then(e => console.log(e.name)).catch(e => console.error(e));
+DnevnikClient.getCurrentAcademicYear().then(e => console.log(e.name)).catch(e => console.error(e));
 ```
 ### Получение списка предметов
 ```js
@@ -140,7 +140,7 @@ client.getNotifications().then(e => {
 ```
 ### Получение ответов на тесты Библиотеки МЭШ
 ```js
-Dnevnik.Client.getMeshAnswers(15987430).then(e => {
+Dnevnik.DnevnikClient.getMeshAnswers(15987430).then(e => {
     for (let question of e) {
         console.log(question.question + " " + JSON.stringify(question.answer));
     }

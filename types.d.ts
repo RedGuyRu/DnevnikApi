@@ -74,7 +74,7 @@ declare interface PuppeteerOptions {
     totp?: string;
 }
 
-export class Client {
+export class DnevnikClient {
     constructor(authenticator: Authenticator);
 
     /**

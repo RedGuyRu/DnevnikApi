@@ -5,7 +5,7 @@ const Utils = require('./Utils');
 const {DateTime, Interval} = require("luxon");
 const AnswersParser = require("./AnswersParser");
 
-class Client {
+class DnevnikClient {
 
     _authenticator = Authenticator.prototype;
 
@@ -77,7 +77,7 @@ class Client {
     }
 
     async getAverageMarks() {
-        let report = await Axios.get("https://dnevnik.mos.ru/reports/api/progress/json?academic_year_id=" + (await Client.getCurrentAcademicYear()).id + "&student_profile_id=" + await this._authenticator.getStudentId(), {
+        let report = await Axios.get("https://dnevnik.mos.ru/reports/api/progress/json?academic_year_id=" + (await DnevnikClient.getCurrentAcademicYear()).id + "&student_profile_id=" + await this._authenticator.getStudentId(), {
             headers: {
                 Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
                 "Auth-token": await this._authenticator.getToken(),
@@ -493,7 +493,7 @@ class Client {
     }
 
     async getPerPeriodMarks() {
-        let report = await Axios.get("https://dnevnik.mos.ru/reports/api/progress/json?academic_year_id=" + (await Client.getCurrentAcademicYear()).id + "&student_profile_id=" + await this._authenticator.getStudentId(), {
+        let report = await Axios.get("https://dnevnik.mos.ru/reports/api/progress/json?academic_year_id=" + (await DnevnikClient.getCurrentAcademicYear()).id + "&student_profile_id=" + await this._authenticator.getStudentId(), {
             headers: {
                 Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
                 "Auth-Token": await this._authenticator.getToken(),
@@ -513,7 +513,7 @@ class Client {
     }
 
     async getTimePeriods() {
-        let report = await Axios.get("https://dnevnik.mos.ru/core/api/periods_schedules?academic_year_id=" + (await Client.getCurrentAcademicYear()).id + "&student_id=" + await this._authenticator.getStudentId(), {
+        let report = await Axios.get("https://dnevnik.mos.ru/core/api/periods_schedules?academic_year_id=" + (await DnevnikClient.getCurrentAcademicYear()).id + "&student_id=" + await this._authenticator.getStudentId(), {
             headers: {
                 Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
                 "Auth-Token": await this._authenticator.getToken(),
@@ -615,4 +615,4 @@ class Client {
     }
 }
 
-module.exports = Client;
+module.exports = DnevnikClient;

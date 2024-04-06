@@ -7,7 +7,7 @@ const {DateTime} = require("luxon");
     let auth = new Dnevnik.FileAuthenticator("auth.json");
     await auth.init();
     await auth.authenticate();
-    let client = new Dnevnik.Client(auth);
+    let client = new Dnevnik.DnevnikClient(auth);
     await auth.refresh();
     await auth.save("auth.json");
 

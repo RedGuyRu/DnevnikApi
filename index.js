@@ -1,7 +1,7 @@
 module.exports = {
     Authenticator: require("./Authenticator"),
     PredefinedAuthenticator: require("./PredefinedAuthenticator"),
-    Client: require("./Client"),
+    DnevnikClient: require("./DnevnikClient"),
     Utils: require("./Utils"),
     PuppeteerAuthenticator: require("./PuppeteerAuthenticator"),
     IncorrectLoginPassword: require("./errors/IncorrectLoginPassword"),
