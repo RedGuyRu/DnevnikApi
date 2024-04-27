@@ -76,6 +76,35 @@ class DnevnikClient {
         return res;
     }
 
+    /**
+     *
+     * @returns {Promise<ProfileV2>}
+     */
+    async getProfileV2() {
+        let res = await Axios.get("https://school.mos.ru/api/family/web/v1/profile/", {
+            headers: {
+                Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
+                "Auth-Token": await this._authenticator.getToken(),
+                "Profile-Id": await this._authenticator.getStudentId(),
+                "x-mes-subsystem": "familyweb"
+            }
+        });
+        res = res.data;
+
+        res.profile = res.profile||{};
+        res.profile.birth_date = res.profile.birth_date == null ? null : Luxon.DateTime.fromFormat(res.profile.birth_date, "dd.MM.yyyy");
+
+        for (let child of res.children) {
+            child.birth_date = child.birth_date == null ? null : Luxon.DateTime.fromFormat(child.birth_date, "dd.MM.yyyy");
+            child.enrollment_date = child.enrollment_date == null ? null : Luxon.DateTime.fromFormat(child.enrollment_date, "dd.MM.yyyy");
+            for (let representative of child.representatives) {
+                representative.birth_date = representative.birth_date == null ? null : Luxon.DateTime.fromFormat(representative.birth_date, "dd.MM.yyyy");
+            }
+        }
+
+        return res;
+    }
+
     async getAverageMarks() {
         let report = await Axios.get("https://dnevnik.mos.ru/reports/api/progress/json?academic_year_id=" + (await DnevnikClient.getCurrentAcademicYear()).id + "&student_profile_id=" + await this._authenticator.getStudentId(), {
             headers: {
@@ -414,13 +443,21 @@ class DnevnikClient {
         return report;
     }
 
-    async getVisits(from = DateTime.now(), to = DateTime.now()) {
-        let profile = await this.getProfile();
-        let report = await Axios.get("https://dnevnik.mos.ru/mobile/api/visits?from=" + from.setZone("Europe/Moscow").toFormat("yyyy-MM-dd") + "&to=" + to.setZone("Europe/Moscow").toFormat("yyyy-MM-dd") + "&contract_id=" + profile.ispp_account, {
+    async getVisits(from = DateTime.now(), to = DateTime.now(), useV2Profile = true) {
+        let ispp;
+        if(useV2Profile) {
+            let profile = await this.getProfileV2();
+            ispp = profile.children.find(child => child.contract_id).contract_id;
+        } else {
+            let profile = await this.getProfile();
+            ispp = profile.ispp_account;
+        }
+        let report = await Axios.get("https://school.mos.ru/api/family/web/v1/visits?from=" + from.setZone("Europe/Moscow").toFormat("yyyy-MM-dd") + "&to=" + to.setZone("Europe/Moscow").toFormat("yyyy-MM-dd") + "&contract_id=" + ispp, {
             headers: {
                 Cookie: "auth_token=" + await this._authenticator.getToken() + "; student_id=" + await this._authenticator.getStudentId() + ";",
                 "Auth-Token": await this._authenticator.getToken(),
                 "Profile-Id": await this._authenticator.getStudentId(),
+                "x-mes-subsystem": "familyweb"
             }
         });
         report = report.data;

@@ -124,8 +124,16 @@ class PuppeteerAuthenticator extends Authenticator {
             page.waitForSelector("#sms-code").then(async () => {
                 if(this._options.totp!==null) {
                     debug("SMS request, redirecting to TOTP");
-                    await page.waitForSelector("div.twoFa__social--main > div > a:nth-child(2)", {visible: true, hidden: false});
-                    await page.click("div.twoFa__social--main > div > a:nth-child(2)")
+                    let selectors = [async () => {
+                        await page.waitForSelector("div.twoFa__social--main > div > a:nth-child(2)", {visible: true, hidden: false});
+                        await page.click("div.twoFa__social--main > div > a:nth-child(2)")
+                    }, async () => {
+                        await page.waitForSelector("div[data-js=\"twofa-toggle-dots\"]", {visible: true, hidden: false});
+                        await page.click("div[data-js=\"twofa-toggle-dots\"]");
+                        await page.waitForSelector("a[href^=\"/sps/login/methods2/totp\"]", {visible: true, hidden: false});
+                        await page.click("a[href^=\"/sps/login/methods2/totp\"]")
+                    }];
+                    await Promise.any(selectors);
                 } else {
                     debug("SMS request, we cannot do anything");
                     throw new TOTPRequested();

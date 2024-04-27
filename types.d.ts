@@ -83,6 +83,11 @@ export class DnevnikClient {
     getProfile(options?: ProfileOptions): Promise<Profile>;
 
     /**
+     * Returns the user profile.
+     */
+    getProfileV2(): Promise<ProfileV2>;
+
+    /**
      * Returns the user average marks.
      */
     getAverageMarks(): Promise<AverageMark[]>;
@@ -158,9 +163,9 @@ export class DnevnikClient {
      * Return array of Visits. If {@link from} or {@link to} is not set, it set to current date.
      * @param from
      * @param to
-     * @deprecated Not working for now
+     * @param useV2Profile use V2 of profile request, by default true
      */
-    getVisits(from?: DateTime, to?: DateTime): Promise<VisitDay[]>;
+    getVisits(from?: DateTime, to?: DateTime, useV2Profile?: boolean): Promise<VisitDay[]>;
 
     /**
      * Returns billing details, such as balance, payment history.
@@ -263,6 +268,64 @@ export class Utils {
     static average(values: number[]): number;
 
     static parseMarksWithWeight(mark: MarkWithWidth[]);
+}
+
+declare interface ProfileV2 {
+    profile: ProfilePerson;
+    children: ProfileChildren[];
+    hash: string;
+}
+
+declare interface ProfileChildren extends ProfilePerson {
+    school: School;
+    class_name: string;
+    class_level_id: number;
+    class_unit_id: number;
+    age: number;
+    groups: ProfileGroup[];
+    representatives: ProfilePerson[];
+    sections: any[];
+    sudir_account_exists: boolean;
+    sudir_login: string | null;
+    is_legal_representative: boolean;
+    parallel_curriculum_id: number;
+    contingent_guid: string;
+    enrollment_date: DateTime;
+}
+
+declare interface ProfileGroup {
+    id: number;
+    name: string;
+    subject_id: number;
+    is_fake: boolean;
+}
+
+declare interface School {
+    id: number;
+    name: string;
+    short_name: string;
+    country: string;
+    principal: string;
+    phone: string;
+    global_school_id: number;
+    municipal_unit_name: string | null;
+}
+
+declare interface ProfilePerson {
+    last_name: string;
+    first_name: string;
+    middle_name: string;
+    birth_date: DateTime | null;
+    sex: "male" | "female";
+    user_id: number;
+    /**
+     * Alias to ispp_account
+     */
+    contract_id: number | null;
+    phone: string | null;
+    email: string | null;
+    snils: string | null;
+    type: "student" | null;
 }
 
 declare interface SchoolInfo {
