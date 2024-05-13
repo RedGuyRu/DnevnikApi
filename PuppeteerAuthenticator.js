@@ -19,12 +19,12 @@ class PuppeteerAuthenticator extends Authenticator {
         this._options = options;
         this._login = login;
         this._password = password;
-        if(this._options.browser===undefined) this._options.browser = null;
-        if(this._options.headless===undefined) this._options.headless = true;
-        if(this._options.sandbox===undefined) this._options.sandbox = true;
-        if(this._options.disableAutomationControlled===undefined) this._options.disableAutomationControlled = true;
-        if(this._options.browserArgs===undefined) this._options.browserArgs = [];
-        if(this._options.totp===undefined) this._options.totp = null;
+        this._options.browser ??= null;
+        this._options.headless ??= true;
+        this._options.sandbox ??= true;
+        this._options.disableAutomationControlled ??= true;
+        this._options.browserArgs ??= [];
+        this._options.totp ??= null;
     }
 
     async init() {
@@ -236,7 +236,7 @@ class PuppeteerAuthenticator extends Authenticator {
                         }
                     }
                     this._authFinished = true;
-                    this._studentId = profileId;
+                    this._studentId = Number.parseInt(profileId.toString());
                     this._token = authToken;
                     break;
                 }

@@ -2,9 +2,9 @@ const Dnevnik = require("..");
 const {DateTime} = require("luxon");
 
 (async () => {
-    //let auth = new Dnevnik.PuppeteerAuthenticator(process.env.login, process.env.password, {headless: false, totp: process.env.totp});
+    let auth = new Dnevnik.PuppeteerAuthenticator(process.env.login, process.env.password, {headless: true, totp: process.env.totp});
     //let auth = new Dnevnik.PredefinedAuthenticator(process.env.student_id, process.env.token);
-    let auth = new Dnevnik.FileAuthenticator("auth.json");
+    //let auth = new Dnevnik.FileAuthenticator("auth.json");
     await auth.init();
     await auth.authenticate();
     let client = new Dnevnik.DnevnikClient(auth);

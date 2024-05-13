@@ -483,7 +483,7 @@ declare interface Schedule {
     summary: string;
     date: DateTime;
     has_homework: boolean;
-    activities: Activity
+    activities: Activity[];
 }
 
 declare interface UnreadAndImportant {

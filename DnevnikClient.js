@@ -18,18 +18,18 @@ class DnevnikClient {
      * @returns {Promise<Profile>}
      */
     async getProfile(options = {}) {
-        if (options.with_groups === undefined) options.with_groups = false;
-        if (options.with_parents === undefined) options.with_parents = false;
-        if (options.with_assignments === undefined) options.with_assignments = false;
-        if (options.with_ec_attendances === undefined) options.with_ec_attendances = false;
-        if (options.with_ae_attendances === undefined) options.with_ae_attendances = false;
-        if (options.with_home_based_periods === undefined) options.with_home_based_periods = false;
-        if (options.with_lesson_comments === undefined) options.with_lesson_comments = false;
-        if (options.with_attendances === undefined) options.with_attendances = false;
-        if (options.with_final_marks === undefined) options.with_final_marks = false;
-        if (options.with_marks === undefined) options.with_marks = false;
-        if (options.with_subjects === undefined) options.with_subjects = false;
-        if (options.with_lesson_info === undefined) options.with_lesson_info = false;
+        options.with_groups ??= false;
+        options.with_parents ??= false;
+        options.with_assignments ??= false;
+        options.with_ec_attendances ??= false;
+        options.with_ae_attendances ??= false;
+        options.with_home_based_periods ??= false;
+        options.with_lesson_comments ??= false;
+        options.with_attendances ??= false;
+        options.with_final_marks ??= false;
+        options.with_marks ??= false;
+        options.with_subjects ??= false;
+        options.with_lesson_info ??= false;
         let query = "";
         for (let key in options) {
             if (options[key]) query += key + "=true&";
