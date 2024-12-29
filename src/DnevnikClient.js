@@ -619,6 +619,7 @@ class DnevnikClient {
         return null;
     }
 
+    //Обратите внимание, что данный метод устарел и не работает, оставлен для истории
     static async getMeshAnswers(variant, context_type = "homework") {
         //Статичный токен гостя который удивительным образом имеет доступ к ответам
         let guestToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";

@@ -138,14 +138,6 @@ client.getNotifications().then(e => {
     }
 }).catch(e => console.log(e))
 ```
-### Получение ответов на тесты Библиотеки МЭШ
-```js
-Dnevnik.DnevnikClient.getMeshAnswers(15987430).then(e => {
-    for (let question of e) {
-        console.log(question.question + " " + JSON.stringify(question.answer));
-    }
-}).catch(e => console.log(e))
-```
 ### Получение списка посещаемости
 ```js
 client.getVisits(DateTime.now().minus({month:1})).then(e => {
