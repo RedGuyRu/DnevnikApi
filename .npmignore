@@ -2,3 +2,5 @@ node_modules
 .idea
 tests
 auth.json
+pnpm-workspace.yaml
+pnpm-lock.yaml

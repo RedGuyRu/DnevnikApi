@@ -1,3 +1,5 @@
 node_modules
 .idea
 auth.json
+pnpm-workspace.yaml
+pnpm-lock.yaml
