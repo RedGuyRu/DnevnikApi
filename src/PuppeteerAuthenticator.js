@@ -1,7 +1,7 @@
 const Authenticator = require('./Authenticator');
 const Puppeteer = require('puppeteer');
 const debug = require('debug')('PuppeteerAuthenticator');
-const Totp = require("otplib").authenticator;
+const Totp = require("otplib");
 const TimeoutError = require("./errors/TimeoutError");
 const IncorrectLoginPassword = require("./errors/IncorrectLoginPassword");
 const TOTPRequested = require("./errors/IncorrectLoginPassword");
@@ -28,10 +28,10 @@ class PuppeteerAuthenticator extends Authenticator {
     }
 
     async init() {
-        if(this._options.browser===null) {
+        if (this._options.browser === null) {
             let args = [];
-            if(!this._options.sandbox) args.push('--no-sandbox');
-            if(this._options.disableAutomationControlled) args.push('--disable-blink-features=AutomationControlled');
+            if (!this._options.sandbox) args.push('--no-sandbox');
+            if (this._options.disableAutomationControlled) args.push('--disable-blink-features=AutomationControlled');
             for (let browserArg of this._options.browserArgs) {
                 args.push(browserArg);
             }
@@ -40,7 +40,7 @@ class PuppeteerAuthenticator extends Authenticator {
                 headless: this._options.headless
             });
         } else {
-            this._browser  = this._options.browser;
+            this._browser = this._options.browser;
         }
     }
 
@@ -60,7 +60,7 @@ class PuppeteerAuthenticator extends Authenticator {
 
     async trueInputText(page, toInput, inputSelector) {
         let inputted = "";
-        while (inputted!==toInput) {
+        while (inputted !== toInput) {
             await page.focus(inputSelector);
             for (let i = 0; i < inputted.length; i++) {
                 await page.keyboard.press('Backspace');
@@ -72,7 +72,7 @@ class PuppeteerAuthenticator extends Authenticator {
 
     async trueInputAsyncText(page, toInput, inputSelector) {
         let inputted = "";
-        while (inputted!==await toInput()) {
+        while (inputted !== await toInput()) {
             await page.focus(inputSelector);
             for (let i = 0; i < inputted.length; i++) {
                 await page.keyboard.press('Backspace');
@@ -94,7 +94,7 @@ class PuppeteerAuthenticator extends Authenticator {
     }
 
     async processAuth() {
-        let context = await this._browser.createIncognitoBrowserContext();
+        let context = await this._browser.createBrowserContext();
         let page = await context.newPage();
         try {
             debug("Loading start page");
@@ -122,34 +122,27 @@ class PuppeteerAuthenticator extends Authenticator {
 
             // sms activation
             page.waitForSelector("#sms-code").then(async () => {
-                if(this._options.totp!==null) {
+                if (this._options.totp !== null) {
                     debug("SMS request, redirecting to TOTP");
-                    let selectors = [async () => {
-                        await page.waitForSelector("div.twoFa__social--main > div > a:nth-child(2)", {visible: true, hidden: false});
-                        await page.click("div.twoFa__social--main > div > a:nth-child(2)")
-                    }, async () => {
-                        await page.waitForSelector("div[data-js=\"twofa-toggle-dots\"]", {visible: true, hidden: false});
-                        await page.click("div[data-js=\"twofa-toggle-dots\"]");
-                        await page.waitForSelector("a[href^=\"/sps/login/methods2/totp\"]", {visible: true, hidden: false});
-                        await page.click("a[href^=\"/sps/login/methods2/totp\"]")
-                    }];
-                    await Promise.any(selectors);
+                    let url = page.url();
+                    await page.goto(`https://login.mos.ru/sps/login/methods2/totp?` + url.substring(url.indexOf("?") + 1, url.length), {
+                        referer: "https://school.mos.ru/"
+                    });
                 } else {
                     debug("SMS request, we cannot do anything");
                     throw new TOTPRequested();
                 }
             }).catch((err) => {
-                if(err instanceof TOTPRequested) {
+                if (err instanceof TOTPRequested) {
                     throw err;
                 }
             });
 
             // totp activation
             page.waitForSelector("#otp").then(async () => {
-                if(this._options.totp!==null) {
+                if (this._options.totp !== null) {
                     debug("TOTP request");
-                    await page.waitForSelector("#otp", {visible: true, hidden: false});
-                    await this.trueInputAsyncText(page, () => Totp.generate(this._options.totp), "#otp");
+                    await this.trueInputAsyncText(page, async () => await Totp.generate({secret: this._options.totp}), "#otp");
                     debug("TOTP sent");
                     await page.click("#save");
                 } else {
@@ -157,38 +150,57 @@ class PuppeteerAuthenticator extends Authenticator {
                     throw new TOTPRequested();
                 }
             }).catch((err) => {
-                if(err instanceof TOTPRequested) {
+                if (err instanceof TOTPRequested) {
                     throw err;
                 }
             });
 
             // trust this browser
-            page.waitForSelector("body > div.system__layout > main > section > div > section > h1", {visible:true, hidden: false, timeout:60000}).then(async () => {
+            page.waitForSelector("#content_wrapper > div.top.bc-top > h2", {
+                visible: true,
+                hidden: false,
+                timeout: 60000
+            }).then(async () => {
+                debug("Trusting this browser");
                 await page.waitForSelector("#agree", {visible: true, hidden: false});
                 await page.click("#agree");
-            }).catch(() => {});
+            }).catch(() => {
+            });
 
             debug("Waiting for finish");
             let state = 0; //0 - wait, 1 - ok, 2 - incorrect password, 3 - mos.ru error
             await Promise.any([new Promise(async res => {
                 try {
-                    await page.waitForResponse("https://dnevnik.mos.ru/mobile/api/profile"/*"https://dnevnik.mos.ru/core/api/student_profiles/"*/, {timeout: 60000})
-                    state = 1;
-                    res(1);
-                } catch (e) {
-                }
-            }),new Promise(async res => {
-                try {
-                    await page.waitForRequest((url) => {
-                        return (url.url().startsWith("https://school.mos.ru/api/family/web/v1/profile"));
-                    }, {timeout: 60000})
+                    await page.waitForResponse("https://dnevnik.mos.ru/mobile/api/profile", {timeout: 60000})
+                    debug("Got profile")
                     state = 1;
                     res(1);
                 } catch (e) {
                 }
             }), new Promise(async res => {
                 try {
-                    await page.waitForSelector("#pswdMethod-c > blockquote > p");
+                    await page.waitForRequest((url) => {
+                        return (url.url().startsWith("https://school.mos.ru/api/family/web/v1/profile"));
+                    }, {timeout: 60000})
+                    debug("Got family")
+                    state = 1;
+                    res(1);
+                } catch (e) {
+                }
+            }), new Promise(async res => {
+                try {
+                    await page.waitForRequest((url) => {
+                        return (url.url().startsWith("https://school.mos.ru/api/usersettings/v1/"));
+                    }, {timeout: 60000})
+                    debug("Got usersettings")
+                    state = 1;
+                    res(1);
+                } catch (e) {
+                }
+            }), new Promise(async res => {
+                try {
+                    await page.waitForSelector("#gErrs > blockquote > div.blockquote-message");
+                    debug("Password is incorrect")
                     state = 2;
                     res(2);
                 } catch (e) {
@@ -196,6 +208,7 @@ class PuppeteerAuthenticator extends Authenticator {
             }), new Promise(async res => {
                 try {
                     await this.sleep(90000);
+                    debug("Timeout exeded")
                     state = 3;
                     res(3);
                 } catch (e) {
@@ -204,7 +217,7 @@ class PuppeteerAuthenticator extends Authenticator {
 
             switch (state) {
                 case 1: {
-                    let cookies = await page.cookies();
+                    let cookies = await context.cookies();
                     try {
                         await page.close();
                     } catch (e) {
